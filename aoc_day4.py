@@ -233,9 +233,8 @@ def part_two():
     for i, line in enumerate(lines):
         winning = set(line['winning'])
         overlap = winning.intersection(line['mine'])
-        for _ in range(line['count']):
-            for n in range(len(overlap)):
-                lines[i+n+1]['count'] += 1
+        for n in range(len(overlap)):
+            lines[i+n+1]['count'] += line['count']
     total = sum(line['count'] for line in lines)
     print(f'part 2: {total}')
 
