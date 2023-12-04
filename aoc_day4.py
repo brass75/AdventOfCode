@@ -240,8 +240,6 @@ def part_two():
     print(f'part 2: {total}')
 
 
-
-
 part_one()
 part_two()
 
