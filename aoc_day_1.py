@@ -1028,7 +1028,9 @@ def part_two():
         digits.append(curr)
 
     converted = list(map(int, (f'{group[0]}{group[-1]}' for group in digits)))
+
     print(f'Part 2: {sum(converted)}')
+
 
 part_one()
 part_two()
