@@ -20,11 +20,22 @@ def parse_input(input: str, remove_spaces: bool = False) -> list[tuple]:
     return [(time, distance) for time, distance in zip(times, distances)]
 
 
+def get_num_options(time: int, distance: int) -> int:
+    least, most = 0, 0
+    for n in range(time + 1):
+        if (time - n) * n > distance:
+            least = n
+            break
+    for n in range(time + 1, 0, -1):
+        if (time - n) * n > distance:
+            most = n
+            break
+    return most - least + 1
+
+
 def part_one(input: str = input):
     parsed_input = parse_input(input)
-    options = []
-    for time, distance in parsed_input:
-        options.append(len([n for n in range(time + 1) if (run := time - n) and run * n > distance]))
+    options = [get_num_options(time, distance) for time, distance in parsed_input]
 
     def multiply(x, y):
         return x * y
@@ -33,10 +44,8 @@ def part_one(input: str = input):
 
 def part_two(input: str = input):
     parsed_input = parse_input(input, remove_spaces=True)
-    options = []
-    for time, distance in parsed_input:
-        options.append(len([n for n in range(time + 1) if (run := time - n) and run * n > distance]))
-    print(f'Part 2: {options[0]}')
+    time, distance = parsed_input[0]
+    print(f'Part 2: {get_num_options(time, distance)}')
 
 
 if __name__ == '__main__':
