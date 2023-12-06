@@ -35,11 +35,10 @@ def get_num_options(time: int, distance: int) -> int:
 
 def part_one(input: str = input):
     parsed_input = parse_input(input)
-    options = [get_num_options(time, distance) for time, distance in parsed_input]
 
     def multiply(x, y):
         return x * y
-    print(f'part 1: {reduce(multiply, options)}')
+    print(f'part 1: {reduce(multiply, (get_num_options(time, distance) for time, distance in parsed_input))}')
 
 
 def part_two(input: str = input):
