@@ -33,16 +33,16 @@ def get_num_options(time: int, distance: int) -> int:
     return most - least + 1
 
 
-def part_one(input: str = input):
-    parsed_input = parse_input(input)
+def part_one(_input: str = input):
+    parsed_input = parse_input(_input)
 
     def multiply(x, y):
         return x * y
     print(f'part 1: {reduce(multiply, (get_num_options(time, distance) for time, distance in parsed_input))}')
 
 
-def part_two(input: str = input):
-    parsed_input = parse_input(input, remove_spaces=True)
+def part_two(_input: str = input):
+    parsed_input = parse_input(_input, remove_spaces=True)
     time, distance = parsed_input[0]
     print(f'Part 2: {get_num_options(time, distance)}')
 
