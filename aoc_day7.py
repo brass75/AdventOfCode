@@ -1023,31 +1023,31 @@ HAND_RANKS = {
 
 class Card:
     def __init__(self, card: str, use_joker: bool = False):
-        self._value = card
+        self.card = card
         self.use_joker = use_joker
+
+    @property
+    def value(self) -> int:
+        if self.use_joker and self.card == 'J':
+            return -1
+        return CARDS.index(self.card)
 
     def __gt__(self, other):
         return self.value > other.value
 
-    @property
-    def value(self) -> int:
-        if self.use_joker and self._value == 'J':
-            return -1
-        return CARDS.index(self._value)
-
     def __eq__(self, other):
-        return self._value == other._value
+        return self.card == other.card
 
     def __hash__(self):
-        return hash(self._value)
+        return hash(self.card)
 
     def __repr__(self):
-        return f'Card({self._value}, use_joker={self.use_joker})'
+        return f'Card(card={self.card}, use_joker={self.use_joker})'
 
     def __str__(self):
-        if self.use_joker and self._value == 'J':
+        if self.use_joker and self.card == 'J':
             return '?'
-        return self._value
+        return self.card
 
 
 class Hand:
@@ -1057,7 +1057,7 @@ class Hand:
         self.use_joker = use_joker
 
     def __repr__(self):
-        return f'Hand({self.orig})'
+        return f'Hand(hand={self.orig}, use_joker={self.use_joker})'
 
     def __str__(self):
         return ''.join(map(str, self.hand))
