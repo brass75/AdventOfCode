@@ -1098,7 +1098,7 @@ def get_hand_rank(hand: Hand) -> int:
     return HAND_RANKS['hc']
 
 
-def part_one(input_: str, use_jokers: bool = False):
+def solve(input_: str, use_jokers: bool = False):
     parsed_input = parse_input(input_, use_jokers)
     ranked_hands = defaultdict(list)
     for hand, bid in parsed_input:
@@ -1114,10 +1114,10 @@ def part_one(input_: str, use_jokers: bool = False):
 
 
 if __name__ == '__main__':
-    part_one(TEST_INPUT)
-    part_one(TEST_INPUT, use_jokers=True)
+    solve(TEST_INPUT)
+    solve(TEST_INPUT, use_jokers=True)
 
     # Since the difference is whether J is a Jack or a Joker but the algorithms are the same it's the same function
     # called for both with the use_jokers flag set appropriately.
-    part_one(INPUT)
-    part_one(INPUT, use_jokers=True)
+    solve(INPUT)
+    solve(INPUT, use_jokers=True)
