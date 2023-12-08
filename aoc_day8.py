@@ -801,7 +801,7 @@ def solve(input_: str, start: str = 'AAA', end: str = 'ZZZ'):
             new_curr.append(next_location)
         curr = new_curr
 
-    print(f'Part 2: count={lcm(*counts)}')
+    print(f'Part {"2" if end == "Z" else "1"}: count={lcm(*counts)} {"[test]" if input_ != INPUT else ""}')
 
 
 if __name__ == '__main__':
