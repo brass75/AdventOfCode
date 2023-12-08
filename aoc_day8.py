@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 import re
-from math import gcd
-
+from math import lcm
 
 INPUT = '''LRRLRRRLRRLRRLRRRLRRLRLLRRRLRRRLRRRLRRRLRRRLRRLLRRRLLRLRRRLRRLRRRLLRRRLRLLRRLRLLRLRLLRRLRRRLRRLLRRRLRRRLRLRRRLRRRLRRRLRRRLRLRRRLLRRRLRRLRRRLRLRRRLRRLRLLLLLRRRLRRRLRRRLRRRLRRLLRLRLRRLRRLLRRRLRRRLRRRLLLRRRLRRRLRRRLRLRRRLLRLRLRRLRRLRRRLRRLRRRLRRRLRRRLRRLLRRRLRRLRRLRLLRRRR
 
@@ -783,19 +782,6 @@ def get_next_location(options: tuple, instruction: str) -> str:
             return options[0]
 
 
-def lcm(nums: list[int]) -> int:
-    """
-    Determine the lowest common multiple of a list of numbers.
-
-    :param nums: List of numbers
-    :return: The LCM of the list
-    """
-    lcm_ = 1
-    for n in nums:
-        lcm_ = lcm_ * (n // (gcd(lcm_, n)))
-    return lcm_
-
-
 def solve(input_: str, start: str = 'AAA', end: str = 'ZZZ'):
     count = 0
     instructions, data = parse_input(input_)
@@ -815,7 +801,7 @@ def solve(input_: str, start: str = 'AAA', end: str = 'ZZZ'):
             new_curr.append(next_location)
         curr = new_curr
 
-    print(f'Part 2: count={lcm(counts)}')
+    print(f'Part 2: count={lcm(*counts)}')
 
 
 if __name__ == '__main__':
