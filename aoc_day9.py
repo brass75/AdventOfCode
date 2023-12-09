@@ -1,5 +1,4 @@
 #! /usr/bin/env python3
-from copy import copy
 from collections import deque
 from functools import reduce
 
@@ -237,4 +236,3 @@ if __name__ == '__main__':
     assert (total := solve(TEST_INPUT, True)) == 2, f'Test for part 1 failed! {total=}'
     total = solve(INPUT, True)
     print(f'Part 2: {total}')
-
