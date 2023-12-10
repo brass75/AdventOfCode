@@ -1,7 +1,4 @@
 #! /usr/bin/env python3
-import copy
-import math
-import re
 
 LOOP_MARKER = 'x'
 
@@ -298,7 +295,7 @@ def solve(input_: str, part_2: bool = False) -> int:
     while a != start:
         loop.append(a)
         a, prev_a = update_grid(a, prev_a, grid)
-    return math.ceil(calculate_polygon_area(loop) - 0.5 * len(loop) + 1) if part_2 else len(loop) // 2
+    return int(calculate_polygon_area(loop) - 0.5 * len(loop) + 1) if part_2 else len(loop) // 2
 
 
 if __name__ == '__main__':
