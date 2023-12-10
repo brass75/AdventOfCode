@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 import copy
+import math
 import re
 
 LOOP_MARKER = 'x'
@@ -244,7 +245,7 @@ def find_starting_type(pos: tuple[int, int], grid: list[list[str]]) -> str:
     raise ValueError(f'Unable to determine pipe type from {direction=}')
 
 
-def get_next_location(pos: tuple[int, int], grid: list[list[str]], prev: tuple[int, int]) -> tuple[int, int]:
+def get_next_location(pos: tuple[int, int], grid: list[list[str]], prev: tuple[int, int] = None) -> tuple[int, int]:
     a, b = get_options(pos, grid)
     return a if a != prev else b
 
@@ -281,7 +282,8 @@ def calculate_polygon_area(coordinates: list[tuple[int, int]]) -> float:
     return 0.5 * abs(sum(x[i] * y[i - 1] - x[i - 1] * y[i] for i in range(len(coordinates))))
 
 
-def update_grid(pos, prev, grid):
+def update_grid(pos: tuple[int, int], prev: tuple[int, int],
+                grid: list[list[str]]) -> tuple[tuple[int, int],tuple[int, int]]:
     next_pos = get_next_location(pos, grid, prev)
     set_position(grid, pos)
     return next_pos, pos
@@ -289,27 +291,14 @@ def update_grid(pos, prev, grid):
 
 def solve(input_: str, part_2: bool = False) -> int:
     grid = parse_input(input_)
-    start = find_start(grid)
-    a, b = get_options(start, grid)
+    prev_a = start = find_start(grid)
+    a = get_next_location(start, grid)
+    loop = [start]
     set_position(grid, start)
-    prev_a, prev_b = start, start
-    count = 0
-    loop_left = [start]
-    loop_right = []
-    while a != b:
-        loop_right.append(a)
-        loop_left.append(b)
+    while a != start:
+        loop.append(a)
         a, prev_a = update_grid(a, prev_a, grid)
-        b, prev_b = update_grid(b, prev_b, grid)
-        count += 1
-    if not part_2:
-        return count + 1
-
-    loop_right.append(b)
-    loop = [*loop_left, *loop_right[::-1]]
-    print('\n\n')
-    print('\n'.join(''.join(line) for line in grid))
-    return int(calculate_polygon_area(loop) - 0.5 * len(loop) + 1)
+    return math.ceil(calculate_polygon_area(loop) - 0.5 * len(loop) + 1) if part_2 else len(loop) // 2
 
 
 if __name__ == '__main__':
