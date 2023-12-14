@@ -1,5 +1,6 @@
 import functools
 import sys
+import time
 
 INPUT = '''......O........#....O..O.O#O.O.##.O#.O##.O#......O........O....O.#..OO#.OO.#..#.........#.O..#O..#.O
 O#..O...O....O.#...##.O....O..O.#...#...O..O#.#.#......#.O##O#....#..O...O..#.#......#.#O..#..#....#
@@ -175,15 +176,19 @@ if __name__ == '__main__':
     expected = [(136, [])]
     for idx, e in enumerate(expected):
         e_total, e_params = e
+        start = time.time()
         assert (total := solve(TEST_INPUT, *e_params)) == e_total, f'Test {1} for part 1 failed! {total=} {e_total=}'
-        print(f'Part 1: [test {idx}] {total}')
+        print(f'Part 1: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
+    start = time.time()
     total = solve(INPUT)
-    print(f'Part 1: {total}')
+    print(f'Part 1: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
 
     expected = [(64, [1000])]
     for idx, e in enumerate(expected):
         e_total, e_params = e
+        start = time.time()
         assert (total := solve(TEST_INPUT, *e_params)) == e_total, f'Test {1} for part 2 failed! {total=} {e_total=}'
-        print(f'Part 2: [test {idx}] {total}')
+        print(f'Part 2: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
+    start = time.time()
     total = solve(INPUT, 1000)
-    print(f'Part 2: {total}')
+    print(f'Part 2: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
