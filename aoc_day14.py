@@ -118,8 +118,8 @@ O.#..O.#.#
 def tilt_platform(pattern: tuple, direction: str) -> tuple:
     def transpose_platform(data: tuple, clockwise: bool):
         if clockwise:
-            return tuple(tuple(x[::-1]) for x in zip(*data))
-        return tuple(x for x in reversed(list(zip(*data))))
+            return tuple(map(lambda x: tuple(x[::-1]), zip(*data)))
+        return tuple(list(zip(*data))[::-1])
 
     def sort_line(row: list) -> list:
         rock_count = 0
@@ -133,15 +133,15 @@ def tilt_platform(pattern: tuple, direction: str) -> tuple:
                         row[j] = 'O'
                     rock_count = 0
 
-        for k in range(len(row) - rock_count, len(row)):
-            row[k] = 'O'
+        for k in range(1, rock_count + 1):
+            row[-k] = 'O'
         return row
 
     match direction:
         case 'E':
             return tuple(map(tuple, map(sort_line, map(list, pattern))))
         case 'W':
-            return tuple(tuple(x[::-1]) for x in (sort_line(list(x)[::-1]) for x in pattern))
+            return tuple(map(lambda x: tuple(x[::-1]), map(sort_line, map(lambda x: list(x[::-1]), pattern))))
         case 'N':
             return transpose_platform(tilt_platform(transpose_platform(pattern, True), 'E'), False)
         case 'S':
