@@ -1,5 +1,7 @@
 from heapq import heappop, heappush
 import time
+from aoc_lib import solve_problem
+
 
 INPUT = '''421255121134531324434224143433234222645522263425354652265654465343546325466356326664652622552555634426222232263662453455414535421555533532144
 115335113455213225154512464534444422544555235634536325456463446546565455557574772332654534352536225446456322346564565553325132355512443432135
@@ -191,27 +193,19 @@ def solve(input_: str, least: int, most: int, start_point: tuple[int, int]) -> i
 
 if __name__ == '__main__':
     part1_args = [1, 3, (0, 0)]
-    expected_1 = [(102, part1_args)]
+    expected_1 = [(102, [TEST_INPUT, *part1_args])]
+    func_1 = solve
 
     part2_args = [4, 10, (0, 0)]
-    expected_2 = [(94, part2_args)]
+    expected_2 = [(94, [TEST_INPUT, *part2_args])]
+    func_2 = solve
 
-    for idx, e in enumerate(expected_1):
-        e_total, e_params = e
-        start = time.time()
-        assert (total := solve(TEST_INPUT, *e_params)) == e_total, f'Test {1} for part 1 failed! {total=} {e_total=}'
-        print(f'Part 1: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
-    start = time.time()
-    total = solve(INPUT, *part1_args)
-    print(f'Part 1: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
+    if expected_1:
+        for idx, (e_total, e_params) in enumerate(expected_1):
+            solve_problem(func_1, 1, (idx, e_total), *e_params)
+        solve_problem(func_1, 1, None, INPUT, *part1_args)
 
     if expected_2:
-        for idx, e in enumerate(expected_2):
-            e_total, e_params = e
-            start = time.time()
-            assert (total := solve(TEST_INPUT, *e_params)) == e_total, \
-                f'Test {1} for part 2 failed! {total=} {e_total=}'
-            print(f'Part 2: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
-        start = time.time()
-        total = solve(INPUT, *part2_args)
-        print(f'Part 2: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
+        for idx, (e_total, e_params) in enumerate(expected_2):
+            solve_problem(func_2, 2, (idx, e_total), *e_params)
+        solve_problem(func_2, 2, None, INPUT, *part2_args)
