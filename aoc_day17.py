@@ -192,6 +192,10 @@ def solve(input_: str, least: int, most: int, start_point: tuple[int, int]) -> i
 if __name__ == '__main__':
     part1_args = [1, 3, (0, 0)]
     expected_1 = [(102, part1_args)]
+
+    part2_args = [4, 10, (0, 0)]
+    expected_2 = [(94, part2_args)]
+
     for idx, e in enumerate(expected_1):
         e_total, e_params = e
         start = time.time()
@@ -201,14 +205,12 @@ if __name__ == '__main__':
     total = solve(INPUT, *part1_args)
     print(f'Part 1: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
 
-    part2_args = [4, 10, (0, 0)]
-    expected_2 = [(94, part2_args)]
     if expected_2:
         for idx, e in enumerate(expected_2):
             e_total, e_params = e
             start = time.time()
-            assert (total := solve(TEST_INPUT,
-                                   *e_params)) == e_total, f'Test {1} for part 2 failed! {total=} {e_total=}'
+            assert (total := solve(TEST_INPUT, *e_params)) == e_total, \
+                f'Test {1} for part 2 failed! {total=} {e_total=}'
             print(f'Part 2: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
         start = time.time()
         total = solve(INPUT, *part2_args)
