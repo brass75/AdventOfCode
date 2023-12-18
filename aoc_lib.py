@@ -15,6 +15,18 @@ def _solve_problem(func: Callable, *args, **kwargs):
     return func(*args, **kwargs)
 
 
+def calculate_polygon_area(coordinates: list[tuple[int, int]]) -> int:
+    """
+    Calculate the area of a polygon. This does not fully include the perimeter. To include the perimeter in the
+    value add 1 + perimeter // 2 to the result.
+
+    :param coordinates: List of x, y coordinates that define the perimeter of the polygon.
+    :return: The area of the polygon excluding the perimeter.
+    """
+    x, y = zip(*coordinates)
+    return abs(sum((x[i-1] + x[i]) * (y[i-1] - y[i]) for i in range(len(coordinates)))//2)
+
+
 def solve_problem(func: Callable, part: int, test_data: tuple[int, int] | None, *args, **kwargs):
     result, run_time = _solve_problem(func, *args, *kwargs)
     test_string = ''
