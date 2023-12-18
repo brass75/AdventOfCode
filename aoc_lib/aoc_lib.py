@@ -1,5 +1,48 @@
 from collections.abc import Callable
 import time
+from typing import Any
+
+
+class GridBase:
+    """ Base class for a grid/matrix using a dictionary for storage """
+    def __init__(self, input_: str, func: Callable = None):
+        lines = input_.splitlines()
+        self.height = len(lines)
+        self.length = len(lines[0])
+        self.grid = {(j, i): func(c) if func else c
+                     for i, line in enumerate(lines)
+                     for j, c in enumerate(line)}
+
+    def __hash__(self) -> int:
+        return hash(self.grid.items)
+
+    def __getitem__(self, item: tuple[int, int]) -> Any:
+        return self.grid[item]
+
+    def __str__(self) -> str:
+        return '\n'.join(''.join(str(self[i, j]) for i in range(self.length)) for j in range(self.height))
+
+    def __len__(self) -> int:
+        return self.height * self.length
+
+    def __contains__(self, item: tuple[int, int]) -> bool:
+        return item in self.grid
+
+    @property
+    def values(self):
+        return self.grid.values()
+
+    @property
+    def items(self):
+        return self.grid.items()
+
+    @property
+    def coordinates(self):
+        return self.grid.keys()
+
+    @property
+    def end(self) -> tuple[int, int]:
+        return self.length - 1, self.height - 1
 
 
 def timed_call(func: Callable):

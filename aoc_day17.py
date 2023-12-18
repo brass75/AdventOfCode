@@ -1,7 +1,5 @@
 from heapq import heappop, heappush
-import time
-from aoc_lib import solve_problem
-
+from aoc_lib import solve_problem, GridBase
 
 INPUT = '''421255121134531324434224143433234222645522263425354652265654465343546325466356326664652622552555634426222232263662453455414535421555533532144
 115335113455213225154512464534444422544555235634536325456463446546565455557574772332654534352536225446456322346564565553325132355512443432135
@@ -163,8 +161,8 @@ TEST_INPUT = '''2413432311323
 
 
 def solve(input_: str, least: int, most: int, start_point: tuple[int, int]) -> int:
-    board = {(i, j): int(c) for i, line in enumerate(input_.splitlines()) for j, c in enumerate(line)}
-    end = max(board)
+    board = GridBase(input_, int)
+    end = board.end
     q = [(0, *start_point, 0, 0)]
     seen = set()
     while q:

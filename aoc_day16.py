@@ -3,6 +3,8 @@ from collections import deque
 from collections.abc import Iterable, Generator
 from typing import Any
 
+from aoc_lib import GridBase
+
 INPUT = r'''\.........|......./...|........................................................|............|-...\...-/.......
 .....................\.......\........./...|...............|...\................................-...|.......\.
 .......................................-....-./............/.......-.............\..|.......|......//.........
@@ -205,9 +207,9 @@ class Queue:
         return bool(self._q)
 
 
-class Grid:
+class Grid(GridBase):
     def __init__(self, input_: str, starting: tuple[int, int] = (0, 0), direction: str = 'R'):
-        self._grid = [list(map(Tile, line)) for line in input_.splitlines()]
+        super().__init__(input_, Tile)
         self._q = Queue([(starting, direction)])
         self._hash = hash((starting, direction))
         self._energize = 1
@@ -215,22 +217,14 @@ class Grid:
     def __hash__(self):
         return self._hash
 
-    def tile_at(self, location: tuple[int, int]) -> Tile:
-        x, y = location
-        return self._grid[y][x]
-
-    def _out_of_bounds(self, nav: tuple[tuple[int, int], str]):
-        (x, y), _ = nav
-        return -1 in (x, y) or x >= len(self._grid[0]) or y >= len(self._grid)
-
     def traverse(self):
         seen = set()
         while self._q:
-            if (nav := self._q.next()) in seen or (self._out_of_bounds(nav)):
+            if (nav := self._q.next()) in seen or (nav[0] not in self):
                 continue
             seen.add(nav)
             (x, y), direction = nav
-            tile = self.tile_at((x, y))
+            tile = self[(x, y)]
             for d in tile.impact(direction, self._energize):
                 match d:
                     case 'D':
@@ -244,10 +238,7 @@ class Grid:
 
     @property
     def energized(self):
-        return sum(sum(t.energized for t in line) for line in self._grid)
-
-    def __str__(self):
-        return '\n'.join(''.join(map(str, line)) for line in self._grid)
+        return sum(t.energized for t in self.values)
 
 
 def get_starts(height: int, width: int) -> Generator[tuple[int, int], str]:
