@@ -20,6 +20,8 @@ def calculate_polygon_area(coordinates: list[tuple[int, int]]) -> int:
     Calculate the area of a polygon. This does not fully include the perimeter. To include the perimeter in the
     value add 1 + perimeter // 2 to the result.
 
+    I'm not including the perimeter part of the calculation here for added flexibility in implementations.
+
     :param coordinates: List of x, y coordinates that define the perimeter of the polygon.
     :return: The area of the polygon excluding the perimeter.
     """
