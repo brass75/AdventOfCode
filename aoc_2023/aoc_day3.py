@@ -145,6 +145,7 @@ input = '''...766.......821.547.....577......................................387
 NUMBERS = list(map(str, range(10)))
 NOT_SYMBOLS = [*NUMBERS, '.']
 
+
 def part_one():
     schematic = [list(line) for line in input.splitlines()]
     row_len = len(schematic[0]) + 2

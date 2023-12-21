@@ -216,7 +216,7 @@ def parse_input(input_: str) -> list[list[int]]:
 
 
 def get_extrapolated(nums: list[int], start: bool = False) -> int:
-    check = 0 if start else -1
+    check = start - 1
     checks = deque([nums[check]])
     while any(nums):
         nums = [nums[i + 1] - nums[i] for i in range(len(nums) - 1)]

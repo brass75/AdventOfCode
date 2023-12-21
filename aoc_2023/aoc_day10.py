@@ -1,4 +1,5 @@
 #! /usr/bin/env python3
+from aoc_lib import calculate_polygon_area
 
 LOOP_MARKER = 'x'
 
@@ -272,11 +273,6 @@ def set_position(grid: list[list[str]], pos: tuple[int, int]):
     if not (translation := TRANSLATIONS.get(grid[y][x])):
         raise RuntimeError(f'Unexpected character at {grid[y][x]=}')
     grid[y][x] = translation
-
-
-def calculate_polygon_area(coordinates: list[tuple[int, int]]) -> float:
-    x, y = zip(*coordinates)
-    return 0.5 * abs(sum(x[i] * y[i - 1] - x[i - 1] * y[i] for i in range(len(coordinates))))
 
 
 def update_grid(pos: tuple[int, int], prev: tuple[int, int],
