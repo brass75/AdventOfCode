@@ -147,4 +147,4 @@ For each brick, determine how many _other bricks_ would fall if that brick were 
 
 Your puzzle answer was `79465`.
 
-Both parts of this puzzle are complete! They provide two gold stars: \*\*
+Both parts of this puzzle are complete! They provide two gold stars: **
