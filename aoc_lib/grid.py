@@ -2,6 +2,8 @@ from collections.abc import Callable
 from heapq import heappush, heappop
 from typing import Any
 
+from aoc_lib.hashable_dict import HashableDict
+
 
 class GridBase:
     """ Base class for a grid/matrix using a dictionary for storage """
@@ -10,12 +12,12 @@ class GridBase:
         lines = input_.splitlines()
         self.height = len(lines)
         self.length = len(lines[0])
-        self.grid = {(j, i): func(c) if func else c
-                     for i, line in enumerate(lines)
-                     for j, c in enumerate(line)}
+        self.grid = HashableDict({(j, i): func(c) if func else c
+                                  for i, line in enumerate(lines)
+                                  for j, c in enumerate(line)})
 
     def __hash__(self) -> int:
-        return hash(self._input)
+        return hash(self.grid)
 
     def __getitem__(self, item: tuple[int, int]) -> Any:
         return self.grid[item]
