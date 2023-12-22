@@ -1460,6 +1460,8 @@ TEST_INPUT = """1,0,1~1,2,1
 1,1,8~1,1,9"""
 
 
+g_bricks = None
+
 def parse_input(input_: str) -> HashableDict:
     bricks = HashableDict()
     for i, line in enumerate(input_.splitlines()):
@@ -1474,35 +1476,41 @@ def parse_input(input_: str) -> HashableDict:
     return bricks
 
 
-def get_support(brick_key, block_coords, bricks, down=False, ignore_key: bool = None) -> set:
-    test_z = min([c[-1] for c in block_coords]) - 1 if down else max([c[-1] for c in block_coords]) + 1
-    return {
+def get_support(brick_key: str, block_coords: list[tuple[int, int, int]], bricks: dict, over: bool = False,
+                ignore_key: str = None) -> Generator:
+    """ Returns the set of blocks supporting (over = False) or supported by (over = True) the block at brick_key. """
+    test_z = min(c[-1] for c in block_coords) - 1 if over else max(c[-1] for c in block_coords) + 1
+    yield from {
         test_brick_key
         for x, y, _ in block_coords
         for test_brick_key, test_block_coords in bricks.items()
-        if test_brick_key not in [brick_key, ignore_key]
+        if test_brick_key not in {brick_key, ignore_key}
         if (x, y, test_z) in test_block_coords
     }
 
 
-def get_at_xy(brick_key, x, y, bricks) -> Generator:
+def get_at_xy(brick_key: str, x: int, y: int, bricks: dict) -> Generator:
+    """ Return all bricks in the dictionary that inhabit (x, y) for all z that are not brick_key. """
     yield from (block_z for block_coords in (v for k, v in bricks.items() if brick_key != k)
                 for block_x, block_y, block_z in block_coords
                 if block_x == x and block_y == y)
 
 
-def try_fall_brick(brick_key, block_coords, bricks):
-    if (lowest_z := block_coords[0][2]) <= 1:
+def try_fall_brick(brick_key: str, bricks: dict) -> bool:
+    """ Return whether a block can fall or not. """
+    if (lowest_z := bricks[brick_key][0][2]) <= 1:
         return False
-    return not any(True for block_x, block_y, block_z in (coords for coords in block_coords if coords[-1] <= lowest_z)
-                   if block_z - 1 in get_at_xy(brick_key, block_x, block_y, bricks))
+    return not any(
+        True for block_x, block_y, block_z in (coords for coords in bricks[brick_key] if coords[-1] <= lowest_z)
+        if block_z - 1 in get_at_xy(brick_key, block_x, block_y, bricks))
 
 
 @functools.cache
 def fall(bricks: HashableDict):
+    """ Recursively drop the bricks until they're all at the lowest possible point. """
     have_fallen = False
     for brick_key, block_coords in ((brick_key, block_coords) for brick_key, block_coords in bricks.items()
-                                    if try_fall_brick(brick_key, block_coords, bricks)):
+                                    if try_fall_brick(brick_key, bricks)):
         bricks[brick_key] = tuple(tuple((x, y, z - 1) for x, y, z in block_coords))
         have_fallen = True
     if have_fallen:
@@ -1511,23 +1519,34 @@ def fall(bricks: HashableDict):
 
 @functools.cache
 def chain_size(bricks: HashableDict, brick_key: str, counter: int) -> int:
+    """ Determine the number of bricks that will fall if the brick at brick_key is removed. (Part 2) """
     brick = bricks.pop(brick_key)
     for support_brick_key in (support_brick_key for support_brick_key in get_support(brick_key, brick, bricks)
-                              if len(get_support(support_brick_key, bricks[support_brick_key], bricks, True)) == 0):
+                              if not any(get_support(support_brick_key, bricks[support_brick_key], bricks, True))):
         counter += chain_size(bricks, support_brick_key, 1)
     return counter
 
 
 def removal_check(bricks: dict) -> int:
-    return sum(len(supporter_brick_keys := get_support(brick_key, brick, bricks)) == 0 or
-               all((len(get_support(supporter_brick_key, bricks[supporter_brick_key], bricks, True, brick_key)) > 0
-                    for supporter_brick_key in supporter_brick_keys))
+    """ Determine the number of bricks that can be safely removed without the entire structure collapsing. (Part 1) """
+    return sum(all(any(get_support(supporter_brick_key, bricks[supporter_brick_key], bricks, True, brick_key))
+                   for supporter_brick_key in get_support(brick_key, brick, bricks))
                for brick_key, brick in bricks.items())
 
 
 def solve(input_: str, remove: bool = False) -> int:
-    bricks = parse_input(input_)
-    fall(bricks)
+    if input_ != TEST_INPUT:
+        # Since the end state for part 1 is the start state for part 2 let's save some time and reuse it.
+        global g_bricks
+        if g_bricks:
+            bricks = g_bricks
+        else:
+            bricks = parse_input(input_)
+            fall(bricks)
+            g_bricks = bricks
+    else:
+        bricks = parse_input(input_)
+        fall(bricks)
     return removal_check(bricks) if not remove else sum(chain_size(deepcopy(bricks), key, 0) for key in bricks)
 
 
