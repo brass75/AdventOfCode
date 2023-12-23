@@ -5,6 +5,31 @@ from typing import Any
 from aoc_lib.hashable_dict import HashableDict
 
 
+class Point:
+    def __init__(self, x:int = None, y:int = None, p=None) -> None:
+        if p:
+            self.x = p.x
+            self.y = p.y
+        elif None in [x, y]:
+            raise ValueError(f'Invalid initializers: {x=}, {y=}, {p=}')
+        self.x = x
+        self.y = y
+
+    def __add__(self, item: tuple[int, int]):
+        x, y = item.x, item.y if isinstance(item, Point) else item
+        return Point(self.x + x, self.y + y)
+
+    def __hash__(self) -> int:
+        return hash((self.x, self.y))
+    
+    def __str__(self) -> str:
+        return f'({self.x}, {self.y})'
+    
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(x={self.x}, y={self.y})'
+    
+
+
 class GridBase:
     """ Base class for a grid/matrix using a dictionary for storage """
     def __init__(self, input_: str, func: Callable = None):
@@ -12,7 +37,7 @@ class GridBase:
         lines = input_.splitlines()
         self.height = len(lines)
         self.length = len(lines[0])
-        self.grid = HashableDict({(j, i): func(c) if func else c
+        self.grid = HashableDict({Point(j, i): func(c) if func else c
                                   for i, line in enumerate(lines)
                                   for j, c in enumerate(line)})
 
@@ -50,29 +75,36 @@ class GridBase:
     def get(self, item, default = None):
         return self.grid.get(item, default)
 
-    def shortest_path(self, start: tuple[int, int], end: tuple[int, int], obstacle: Any = None,
-                      max_length: int = 0, most: int = 1, least: int = 1) -> int:
-        q = [(0, *start, 0, 0)]
+    def shortest_path(self, start: Point | tuple[int, int], end: tuple[int, int], obstacle: Any = None,
+                      max_length: int = 0, most: int = 1, least: int = 1, longest: bool = False,
+                      callback: Callable = None) -> int:
+        q = [(0, Point(start), 0, 0)]
         seen = set()
+
         while q:
-            length, x, y, px, py = heappop(q)
-            if end == (x, y) or (max_length and length > max_length):
+            length, p, pp = heappop(q)
+            if end == p or (max_length and length > max_length):
                 return length
-            if (x, y, px, py) in seen:
+            if (p, pp) in seen:
                 continue
-            seen.add((x, y, px, py))
+            seen.add((p, pp))
 
             # Loop over next possible locations excluding previously visited (px, py)
-            for dx, dy in {(1, 0), (0, 1), (-1, 0), (0, -1)}.difference({(-px, -py)}):
+            for dp in {p for p in map(Point, ((1, 0), (0, 1), (-1, 0), (0, -1)))}.difference({(-px, -py)}):
                 # Initialize the variables for each iteration of the loop.
-                nx, ny, l = x, y, length
+                l = length
                 # Check each stop up to the maximum allowed
                 for i in range(1, most + 1):
                     # Increment the coordinates we're looking at
-                    nx, ny = nx + dx, ny + dy
-                    if (nx, ny) not in self or (obstacle and self[(nx, ny)] == obstacle):
+                    np = p + dp
+                    if callable:
+                        res = callable((np), self, longest)
+                        if res:
+                            heappush(res)
+                        continue
+                    if np not in self or (obstacle and self[np] == obstacle):
                         continue
                     if i >= least:
                         # If we're beyond the minimum number of steps add to the heap.
-                        heappush(q, (l+i, nx, ny, dx, dy))
+                        heappush(q, (l - i if longest else l + i, np, dp))
 
