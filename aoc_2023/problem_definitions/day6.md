@@ -1,29 +1,3 @@
- Day 6 - Advent of Code 2023    window.addEventListener('click', function(e,s,r){if(e.target.nodeName==='CODE'&&e.detail===3){s=window.getSelection();s.removeAllRanges();r=document.createRange();r.selectNodeContents(e.target);s.addRange(r);}});
-
-[Advent of Code](/)
-===================
-
-*   [\[About\]](/2023/about)
-*   [\[Events\]](/2023/events)
-*   [\[Shop\]](https://teespring.com/stores/advent-of-code)
-*   [\[Settings\]](/2023/settings)
-*   [\[Log Out\]](/2023/auth/logout)
-
-Dan Shernicoff 44\*
-
-  {year=>[2023](/2023)}
-=======================
-
-*   [\[Calendar\]](/2023)
-*   [\[AoC++\]](/2023/support)
-*   [\[Sponsors\]](/2023/sponsors)
-*   [\[Leaderboard\]](/2023/leaderboard)
-*   [\[Stats\]](/2023/stats)
-
-Our [sponsors](/2023/sponsors) help make Advent of Code possible:
-
-[Spotify](https://engineering.atspotify.com/) - Follow our engineering blog to see how our developers solve complex tech problems, at scale, every day.
-
 \--- Day 6: Wait For It ---
 ---------------------------
 

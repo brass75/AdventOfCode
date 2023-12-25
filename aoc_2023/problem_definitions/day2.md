@@ -1,78 +1,61 @@
- Day 1 - Advent of Code 2023    window.addEventListener('click', function(e,s,r){if(e.target.nodeName==='CODE'&&e.detail===3){s=window.getSelection();s.removeAllRanges();r=document.createRange();r.selectNodeContents(e.target);s.addRange(r);}});
+\--- Day 2: Cube Conundrum ---
+------------------------------
 
-[Advent of Code](/)
-===================
+You're launched high into the atmosphere! The apex of your trajectory just barely reaches the surface of a large island floating in the sky. You gently land in a fluffy pile of leaves. It's quite cold, but you don't see much snow. An Elf runs over to greet you.
 
-*   [\[About\]](/2023/about)
-*   [\[Events\]](/2023/events)
-*   [\[Shop\]](https://teespring.com/stores/advent-of-code)
-*   [\[Settings\]](/2023/settings)
-*   [\[Log Out\]](/2023/auth/logout)
+The Elf explains that you've arrived at _Snow Island_ and apologizes for the lack of snow. He'll be happy to explain the situation, but it's a bit of a walk, so you have some time. They don't get many visitors up here; would you like to play a game in the meantime?
 
-Dan Shernicoff 44\*
+As you walk, the Elf shows you a small bag and some cubes which are either red, green, or blue. Each time you play this game, he will hide a secret number of cubes of each color in the bag, and your goal is to figure out information about the number of cubes.
 
-  0.0.0.0:[2023](/2023)
-=======================
+To get information, once a bag has been loaded with cubes, the Elf will reach into the bag, grab a handful of random cubes, show them to you, and then put them back in the bag. He'll do this a few times per game.
 
-*   [\[Calendar\]](/2023)
-*   [\[AoC++\]](/2023/support)
-*   [\[Sponsors\]](/2023/sponsors)
-*   [\[Leaderboard\]](/2023/leaderboard)
-*   [\[Stats\]](/2023/stats)
+You play several games and record the information from each game (your puzzle input). Each game is listed with its ID number (like the `11` in `Game 11: ...`) followed by a semicolon-separated list of subsets of cubes that were revealed from the bag (like `3 red, 5 green, 4 blue`).
 
-Our [sponsors](/2023/sponsors) help make Advent of Code possible:
+For example, the record of a few games might look like this:
 
-[Accenture Federal Services](https://www.accenture.com/us-en/industries/afs-index) - Technology & ingenuity moving missions forward – come solve problems with us. Hiring software engineers, developers, and more now. Refer someone to earn up to $20K.
-
-\--- Day 1: Trebuchet?! ---
----------------------------
-
-Something is wrong with global snow production, and you've been selected to take a look. The Elves have even given you a map; on it, they've used stars to mark the top fifty locations that are likely to be having problems.
-
-You've been doing this long enough to know that to restore snow operations, you need to check all _fifty stars_ by December 25th.
-
-Collect stars by solving puzzles. Two puzzles will be made available on each day in the Advent calendar; the second puzzle is unlocked when you complete the first. Each puzzle grants _one star_. Good luck!
-
-You try to ask why they can't just use a [weather machine](/2015/day/1) ("not powerful enough") and where they're even sending you ("the sky") and why your map looks mostly blank ("you sure ask a lot of questions") and hang on did you just say the sky ("of course, where do you think snow comes from") when you realize that the Elves are already loading you into a [trebuchet](https://en.wikipedia.org/wiki/Trebuchet) ("please hold still, we need to strap you in").
-
-As they're making the final adjustments, they discover that their calibration document (your puzzle input) has been _amended_ by a very young Elf who was apparently just excited to show off her art skills. Consequently, the Elves are having trouble reading the values on the document.
-
-The newly-improved calibration document consists of lines of text; each line originally contained a specific _calibration value_ that the Elves now need to recover. On each line, the calibration value can be found by combining the _first digit_ and the _last digit_ (in that order) to form a single _two-digit number_.
-
-For example:
-
-    1abc2
-    pqr3stu8vwx
-    a1b2c3d4e5f
-    treb7uchet
+    Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+    Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+    Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+    Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+    Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
     
 
-In this example, the calibration values of these four lines are `12`, `38`, `15`, and `77`. Adding these together produces `142`.
+In game 1, three sets of cubes are revealed from the bag (and then put back again). The first set is 3 blue cubes and 4 red cubes; the second set is 1 red cube, 2 green cubes, and 6 blue cubes; the third set is only 2 green cubes.
 
-Consider your entire calibration document. _What is the sum of all of the calibration values?_
+The Elf would first like to know which games would have been possible if the bag contained _only 12 red cubes, 13 green cubes, and 14 blue cubes_?
 
-Your puzzle answer was `55130`.
+In the example above, games 1, 2, and 5 would have been _possible_ if the bag had been loaded with that configuration. However, game 3 would have been _impossible_ because at one point the Elf showed you 20 red cubes at once; similarly, game 4 would also have been _impossible_ because the Elf showed you 15 blue cubes at once. If you add up the IDs of the games that would have been possible, you get `8`.
+
+Determine which games would have been possible if the bag had been loaded with only 12 red cubes, 13 green cubes, and 14 blue cubes. _What is the sum of the IDs of those games?_
+
+Your puzzle answer was `2285`.
 
 \--- Part Two ---
 -----------------
 
-Your calculation isn't quite right. It looks like some of the digits are actually _spelled out with letters_: `one`, `two`, `three`, `four`, `five`, `six`, `seven`, `eight`, and `nine` _also_ count as valid "digits".
+The Elf says they've stopped producing snow because they aren't getting any _water_! He isn't sure why the water stopped; however, he can show you how to get to the water source to check it out for yourself. It's just up ahead!
 
-Equipped with this new information, you now need to find the real first and last digit on each line. For example:
+As you continue your walk, the Elf poses a second question: in each game you played, what is the _fewest number of cubes of each color_ that could have been in the bag to make the game possible?
 
-    two1nine
-    eightwothree
-    abcone2threexyz
-    xtwone3four
-    4nineeightseven2
-    zoneight234
-    7pqrstsixteen
+Again consider the example games from earlier:
+
+    Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+    Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+    Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+    Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+    Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
     
 
-In this example, the calibration values are `29`, `83`, `13`, `24`, `42`, `14`, and `76`. Adding these together produces `281`.
+*   In game 1, the game could have been played with as few as 4 red, 2 green, and 6 blue cubes. If any color had even one fewer cube, the game would have been impossible.
+*   Game 2 could have been played with a minimum of 1 red, 3 green, and 4 blue cubes.
+*   Game 3 must have been played with at least 20 red, 13 green, and 6 blue cubes.
+*   Game 4 required at least 14 red, 3 green, and 15 blue cubes.
+*   Game 5 needed no fewer than 6 red, 3 green, and 2 blue cubes in the bag.
 
-_What is the sum of all of the calibration values?_
+The _power_ of a set of cubes is equal to the numbers of red, green, and blue cubes multiplied together. The power of the minimum set of cubes in game 1 is `48`. In games 2-5 it was `12`, `1560`, `630`, and `36`, respectively. Adding up these five powers produces the sum `2286`.
 
-Your puzzle answer was `54985`.
+For each game, find the minimum set of cubes that must have been present. _What is the sum of the power of these sets?_
+
+Your puzzle answer was `77021`.
 
 Both parts of this puzzle are complete! They provide two gold stars: **

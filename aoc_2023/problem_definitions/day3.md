@@ -1,29 +1,3 @@
- Day 3 - Advent of Code 2023    window.addEventListener('click', function(e,s,r){if(e.target.nodeName==='CODE'&&e.detail===3){s=window.getSelection();s.removeAllRanges();r=document.createRange();r.selectNodeContents(e.target);s.addRange(r);}});
-
-[Advent of Code](/)
-===================
-
-*   [\[About\]](/2023/about)
-*   [\[Events\]](/2023/events)
-*   [\[Shop\]](https://teespring.com/stores/advent-of-code)
-*   [\[Settings\]](/2023/settings)
-*   [\[Log Out\]](/2023/auth/logout)
-
-Dan Shernicoff 44\*
-
-       y([2023](/2023))
-=======================
-
-*   [\[Calendar\]](/2023)
-*   [\[AoC++\]](/2023/support)
-*   [\[Sponsors\]](/2023/sponsors)
-*   [\[Leaderboard\]](/2023/leaderboard)
-*   [\[Stats\]](/2023/stats)
-
-Our [sponsors](/2023/sponsors) help make Advent of Code possible:
-
-[Source Allies](https://www.sourceallies.com/careers/) - Enjoy the gift of good code! Join experts who solve problems w/ an ownership mindset. Make a difference on day one, not one day!
-
 \--- Day 3: Gear Ratios ---
 ---------------------------
 
