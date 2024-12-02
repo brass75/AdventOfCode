@@ -1,9 +1,9 @@
 #! /usr/bin/env python3
 from aoc_lib import calculate_polygon_area
 
-LOOP_MARKER = 'x'
+LOOP_MARKER = "x"
 
-INPUT = '''F-L----F7-7.F-7JJ.F--L-.F|F77.L|7.FLF-7.JJ--7FF-F-F7F7.7-F-7.L.FL7F|7--777.FJ-|7J-F-J-77-FF-F-7.JF77.L.JFL.L-|-FF7-77FL--F77.7-|77F7|7FF7-7-
+INPUT = """F-L----F7-7.F-7JJ.F--L-.F|F77.L|7.FLF-7.JJ--7FF-F-F7F7.7-F-7.L.FL7F|7--777.FJ-|7J-F-J-77-FF-F-7.JF77.L.JFL.L-|-FF7-77FL--F77.7-|77F7|7FF7-7-
 J|F7.LL|.F7.FL|J-77--JJ7L|-|-F-7L7-|LJ|F|JL|L-JJ|L|--7FF77.|-L7|LFLF-7FL--LL.FLJL-JFF-F7.-LJLF|J-LJ|FJ.|7-7L-JF|.J.LF7|L7.LF-|7F7-|-7-J7|7.|
 FF7J.7L|-7|FF7|L7|L|.LF7-JFLJJ.J7JJFJ-7.L-LLJJ|LJ7LL|.JLL---.LFJ7L-LJL-|JJ-|-F.LJ7|FLF-J.L7.FJ||F||L|L7--F..FLF7-L7|LLJ7L7.-7||||J|FJ.LLJ7F-
 FJ.LF-7-FJLJ-|7-7J777..|-FJ7.FJ.|.F|LFL-L7L|..--L|7.F-7-L|..FF|JF|7J.|7|FF-|.LF7LL77.J.LJL|7LF-77.|FFJ|7FLJF|-F7..FJF7L7.FJF7LJ||--|JJLLJF.J
@@ -142,15 +142,15 @@ LF7.F.|.LF7FL--L7LJ7.L7J.7.|.F-F.|LJLFLJ7LLJLJ7|.LJ7|||7FJFLF-JFJL7|||LJ-L-7F-J-
 |.LFJ-|JLF7-7-||L|||J.FFJ7.|F-7J|7.LL-7|FJF-7F||FF7||7L-|-LJLJLF.F|-|JL--7F77F--||-.LFJ-LL7F-FF.FL--JJ.LJ7-F.F7F7L||.-.FJLF.-J|-FJJL7..J|FFJ
 F-|.F7|.FJ7FL-|-7F||L-J|F7F-L7J-7--F7FFLJLFFL7J|7|F-7F|.|LF7|.L|-LLJFJJ..L-JF7|FLJ.F||J||-J.F-JFL.-7|F-JFF7.--JJJFJ|||-|F|L-.FJLLJL7LFF-L|J7
 .FJF|JFFJLL77||L-7LJ77F-||L-|J.||J.L7-7-L--77F7L-J7JL--7L-F-|7-F7LF-L7LFF-J.||7FL|7.F--J7F|.F777-LL7LL.|LF7-LFJLF7|L7|.LJ777F|-7|-FJ-.L7-7||
-F-J-L--|.LFJ-F|-J-----|.LLLJL7-JJ.F-L-7-F---JLJLLLL.7LL|LFJ|L--LL---L7-FJ.L|--L-JLL7L7.LLLJ-FJL|J-LLJL.|.JJLLLJ.LLF.L77LL|-J-|-7JJ..L-7JJ.-J'''
+F-J-L--|.LFJ-F|-J-----|.LLLJL7-JJ.F-L-7-F---JLJLLLL.7LL|LFJ|L--LL---L7-FJ.L|--L-JLL7L7.LLLJ-FJL|J-LLJL.|.JJLLLJ.LLF.L77LL|-J-|-7JJ..L-7JJ.-J"""
 
-TEST_INPUT = '''.....
+TEST_INPUT = """.....
 .S-7.
 .|.|.
 .L-J.
-.....'''
+....."""
 
-TEST_INPUT2 = '''FF7FSF7F7F7F7F7F---7
+TEST_INPUT2 = """FF7FSF7F7F7F7F7F---7
 L|LJ||||||||||||F--J
 FL-7LJLJ||||||LJL-77
 F--JF--7||LJLJIF7FJ-
@@ -160,9 +160,9 @@ L---JF-JLJIIIIFJLJJ7
 7-L-JL7||F7|L7F-7F7|
 L.L7LFJ|||||FJL7||LJ
 L7JLJL-JLJLJL--JLJ.L
-'''
+"""
 
-TEST_INPUT3 = '''...........
+TEST_INPUT3 = """...........
 .S-------7.
 .|F-----7|.
 .||.....||.
@@ -170,9 +170,9 @@ TEST_INPUT3 = '''...........
 .|L-7.F-J|.
 .|..|.|..|.
 .L--J.L--J.
-...........'''
+..........."""
 
-TEST_INPUT4 = '''.F----7F7F7F7F-7....
+TEST_INPUT4 = """.F----7F7F7F7F-7....
 .|F--7||||||||FJ....
 .||.FJ||||||||L7....
 FJL7L7LJLJ||LJ.L-7..
@@ -181,7 +181,7 @@ L--J.L7...LJS7F-7L7.
 ....L7.F7||L7|.L7L7|
 .....|FJLJ|FJ|F7|.LJ
 ....FJL-7.||.||||...
-....L---J.LJ.LJLJ...'''
+....L---J.LJ.LJLJ..."""
 
 # | is a vertical pipe connecting north and south.
 # - is a horizontal pipe connecting east and west.
@@ -194,21 +194,21 @@ L--J.L7...LJS7F-7L7.
 # shape the pipe has.
 
 MAPPINGS = {
-    '|': 'NS',
-    '-': 'EW',
-    'L': 'NE',
-    'J': 'NW',
-    '7': 'SW',
-    'F': 'SE',
+    "|": "NS",
+    "-": "EW",
+    "L": "NE",
+    "J": "NW",
+    "7": "SW",
+    "F": "SE",
 }
 
 TRANSLATIONS = {
-    '|': '│',
-    '-': '─',
-    'L': '└',
-    'J': '┘',
-    '7': '┐',
-    'F': '┌',
+    "|": "│",
+    "-": "─",
+    "L": "└",
+    "J": "┘",
+    "7": "┐",
+    "F": "┌",
 }
 
 
@@ -219,64 +219,69 @@ def parse_input(input_: str) -> list[list[str]]:
 
 def find_start(grid: list[list[str]]) -> tuple[int, int]:
     for i, line in enumerate(grid):
-        if 'S' in line:
-            pos = (i, line.index('S'))
+        if "S" in line:
+            pos = (i, line.index("S"))
             find_starting_type(pos, grid)
             return pos
 
 
 def find_starting_type(pos: tuple[int, int], grid: list[list[str]]) -> str:
-    direction = ''
+    direction = ""
     y, x = pos
-    if grid[y - 1][x] in '|7F':
-        direction += 'N'
-    if grid[y + 1][x] in '|LJ':
-        direction += 'S'
-    if grid[y][x + 1] in '-J7':
-        direction += 'E'
-    if grid[y][x - 1] in '-LF':
-        direction += 'W'
+    if grid[y - 1][x] in "|7F":
+        direction += "N"
+    if grid[y + 1][x] in "|LJ":
+        direction += "S"
+    if grid[y][x + 1] in "-J7":
+        direction += "E"
+    if grid[y][x - 1] in "-LF":
+        direction += "W"
     for mapping, direction_ in MAPPINGS.items():
         if direction == direction_:
             grid[y][x] = mapping
             return mapping
-    raise ValueError(f'Unable to determine pipe type from {direction=}')
+    raise ValueError(f"Unable to determine pipe type from {direction=}")
 
 
-def get_next_location(pos: tuple[int, int], grid: list[list[str]], prev: tuple[int, int] = None) -> tuple[int, int]:
+def get_next_location(
+    pos: tuple[int, int], grid: list[list[str]], prev: tuple[int, int] = None
+) -> tuple[int, int]:
     a, b = get_options(pos, grid)
     return a if a != prev else b
 
 
-def get_options(pos: tuple[int, int], grid: list[list[str]]) -> tuple[tuple[int, int], tuple[int, int]]:
+def get_options(
+    pos: tuple[int, int], grid: list[list[str]]
+) -> tuple[tuple[int, int], tuple[int, int]]:
     y, x = pos
     pipe = grid[y][x]
     if not (direction := MAPPINGS.get(pipe)):
-        raise RuntimeError(f'No pipe found at {tuple([x, y])=} {grid[y][x]=}')
+        raise RuntimeError(f"No pipe found at {tuple([x, y])=} {grid[y][x]=}")
     match direction:
-        case 'NS':
+        case "NS":
             return (y - 1, x), (y + 1, x)
-        case 'EW':
+        case "EW":
             return (y, x - 1), (y, x + 1)
-        case 'NW':
+        case "NW":
             return (y - 1, x), (y, x - 1)
-        case 'SW':
+        case "SW":
             return (y + 1, x), (y, x - 1)
-        case 'NE':
+        case "NE":
             return (y - 1, x), (y, x + 1)
-        case 'SE':
+        case "SE":
             return (y + 1, x), (y, x + 1)
 
 
 def set_position(grid: list[list[str]], pos: tuple[int, int]):
     y, x = pos
     if not (translation := TRANSLATIONS.get(grid[y][x])):
-        raise RuntimeError(f'Unexpected character at {grid[y][x]=}')
+        raise RuntimeError(f"Unexpected character at {grid[y][x]=}")
     grid[y][x] = translation
 
 
-def update_grid(pos: tuple[int, int], prev: tuple[int, int],
-                grid: list[list[str]]) -> tuple[tuple[int, int],tuple[int, int]]:
+def update_grid(
+    pos: tuple[int, int], prev: tuple[int, int], grid: list[list[str]]
+) -> tuple[tuple[int, int], tuple[int, int]]:
     next_pos = get_next_location(pos, grid, prev)
     set_position(grid, pos)
     return next_pos, pos
@@ -291,16 +296,22 @@ def solve(input_: str, part_2: bool = False) -> int:
     while a != start:
         loop.append(a)
         a, prev_a = update_grid(a, prev_a, grid)
-    return int(calculate_polygon_area(loop) - 0.5 * len(loop) + 1) if part_2 else len(loop) // 2
+    return (
+        int(calculate_polygon_area(loop) - 0.5 * len(loop) + 1)
+        if part_2
+        else len(loop) // 2
+    )
 
 
-if __name__ == '__main__':
-    assert (total := solve(TEST_INPUT)) == 4, f'Test for part 1 failed! {total=}'
+if __name__ == "__main__":
+    assert (total := solve(TEST_INPUT)) == 4, f"Test for part 1 failed! {total=}"
     total = solve(INPUT)
-    print(f'Part 1: {total}')
+    print(f"Part 1: {total}")
 
-    assert (total := solve(TEST_INPUT2, True)) == 10, f'Test for part 2 failed! {total=}'
-    assert (total := solve(TEST_INPUT3, True)) == 4, f'Test for part 2 failed! {total=}'
-    assert (total := solve(TEST_INPUT4, True)) == 8, f'Test for part 2 failed! {total=}'
+    assert (
+        total := solve(TEST_INPUT2, True)
+    ) == 10, f"Test for part 2 failed! {total=}"
+    assert (total := solve(TEST_INPUT3, True)) == 4, f"Test for part 2 failed! {total=}"
+    assert (total := solve(TEST_INPUT4, True)) == 8, f"Test for part 2 failed! {total=}"
     total = solve(INPUT, True)
-    print(f'Part 2: {total}')
+    print(f"Part 2: {total}")

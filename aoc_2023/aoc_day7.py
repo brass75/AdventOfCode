@@ -2,7 +2,7 @@
 import copy
 from collections import Counter, defaultdict
 
-INPUT = '''4K8J9 314
+INPUT = """4K8J9 314
 982KT 991
 88J55 371
 77744 552
@@ -1001,23 +1001,23 @@ TJ6TT 341
 46444 469
 46J24 322
 T42Q8 864
-88989 929'''
+88989 929"""
 
-TEST_INPUT = '''32T3K 765
+TEST_INPUT = """32T3K 765
 T55J5 684
 KK677 28
 KTJJT 220
-QQQJA 483'''
+QQQJA 483"""
 
-CARDS = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']
+CARDS = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
 HAND_RANKS = {
-    'hc': 0,
-    '1p': 1,
-    '2p': 2,
-    '3k': 3,
-    'fh': 4,
-    '4k': 5,
-    '5k': 6,
+    "hc": 0,
+    "1p": 1,
+    "2p": 2,
+    "3k": 3,
+    "fh": 4,
+    "4k": 5,
+    "5k": 6,
 }
 
 
@@ -1028,7 +1028,7 @@ class Card:
 
     @property
     def value(self) -> int:
-        if self.use_joker and self.card == 'J':
+        if self.use_joker and self.card == "J":
             return -1
         return CARDS.index(self.card)
 
@@ -1042,11 +1042,11 @@ class Card:
         return hash(self.card)
 
     def __repr__(self):
-        return f'Card(card={self.card}, use_joker={self.use_joker})'
+        return f"Card(card={self.card}, use_joker={self.use_joker})"
 
     def __str__(self):
-        if self.use_joker and self.card == 'J':
-            return '?'
+        if self.use_joker and self.card == "J":
+            return "?"
         return self.card
 
 
@@ -1057,10 +1057,10 @@ class Hand:
         self.use_joker = use_joker
 
     def __repr__(self):
-        return f'Hand(hand={self.orig}, use_joker={self.use_joker})'
+        return f"Hand(hand={self.orig}, use_joker={self.use_joker})"
 
     def __str__(self):
-        return ''.join(map(str, self.hand))
+        return "".join(map(str, self.hand))
 
     def __gt__(self, other):
         for i in range(len(self.hand)):
@@ -1078,24 +1078,24 @@ def get_hand_rank(hand: Hand) -> int:
     card_count = Counter(hand.hand)
     if hand.use_joker:
         _hand = copy.deepcopy(hand)
-        if (jokers := card_count.pop(Card('J'), 0)) == 5:
-            return HAND_RANKS['5k']
+        if (jokers := card_count.pop(Card("J"), 0)) == 5:
+            return HAND_RANKS["5k"]
         high_count = max(card_count.items(), key=lambda x: (x[1], x[0]))
         card_count[high_count[0]] += jokers
     match len(card_count):
         case 1:
-            return HAND_RANKS['5k']
+            return HAND_RANKS["5k"]
         case 2:
             if 1 in card_count.values():
-                return HAND_RANKS['4k']
-            return HAND_RANKS['fh']
+                return HAND_RANKS["4k"]
+            return HAND_RANKS["fh"]
         case 3:
             if 3 in card_count.values():
-                return HAND_RANKS['3k']
-            return HAND_RANKS['2p']
+                return HAND_RANKS["3k"]
+            return HAND_RANKS["2p"]
         case 4:
-            return HAND_RANKS['1p']
-    return HAND_RANKS['hc']
+            return HAND_RANKS["1p"]
+    return HAND_RANKS["hc"]
 
 
 def solve(input_: str, use_jokers: bool = False):
@@ -1110,10 +1110,12 @@ def solve(input_: str, use_jokers: bool = False):
             total += i * bid
             i += 1
 
-    print(f'Part one: {total} (input={"test" if input_ == TEST_INPUT else "real"}, {use_jokers=})')
+    print(
+        f'Part one: {total} (input={"test" if input_ == TEST_INPUT else "real"}, {use_jokers=})'
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     solve(TEST_INPUT)
     solve(TEST_INPUT, use_jokers=True)
 

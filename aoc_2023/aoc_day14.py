@@ -2,7 +2,7 @@ import functools
 import sys
 import time
 
-INPUT = '''......O........#....O..O.O#O.O.##.O#.O##.O#......O........O....O.#..OO#.OO.#..#.........#.O..#O..#.O
+INPUT = """......O........#....O..O.O#O.O.##.O#.O##.O#......O........O....O.#..OO#.OO.#..#.........#.O..#O..#.O
 O#..O...O....O.#...##.O....O..O.#...#...O..O#.#.#......#.O##O#....#..O...O..#.#......#.#O..#..#....#
 O....##.O#O##.O...#...#.#.......OO.##..###.OO..O.#.#.OO#O..##..O.O.#...#..O.#....O.##.O#OO..........
 ....O#.O..OO.#..OOOO#.......O.....O.#O......OOO#....O.....O......O.....#..OOO.....O...O.O##OO.....##
@@ -101,9 +101,9 @@ OOO#O.OO..#.......OO.OO...O...##.O.##..O....OO...O.O.............##O......#.#..O
 #OO.O.OO.....O#....O.OO..###...O.....#..O##...O..###.O...#.O..#.O...O...OOO.#.O.#..O...O#..OO.#O...O
 .###..#.OO#O..O.#..#.O..O...#....#.#..#O.O....#O....O#..#......#...#..O.....O.O.#O...O..O.....O#..#.
 ..###....OOOO......#O....O.....O.O.O..O.#O..##...#O#..#..#....#.O..#..O.......O...#.O#.#..#...O....#
-......#O.#.......O..OO#O#....#.....OO#..#.OO..O.#....#...#O....#...O....O#.......O..#.O.#...#.#.O...'''
+......#O.#.......O..OO#O#....#.....OO#..#.OO..O.#....#...#O....#...O....O#.......O..#.O.#...#.#.O..."""
 
-TEST_INPUT = '''O....#....
+TEST_INPUT = """O....#....
 O.OO#....#
 .....##...
 OO.#O....O
@@ -112,7 +112,7 @@ O.#..O.#.#
 ..O..#O..O
 .......O..
 #....###..
-#OO..#....'''
+#OO..#...."""
 
 
 @functools.cache
@@ -126,33 +126,42 @@ def tilt_platform(pattern: tuple, direction: str) -> tuple:
         rock_count = 0
         for i, item in enumerate(row):
             match item:
-                case 'O':
+                case "O":
                     rock_count += 1
-                    row[i] = '.'
-                case '#':
+                    row[i] = "."
+                case "#":
                     for j in range(i - rock_count, i):
-                        row[j] = 'O'
+                        row[j] = "O"
                     rock_count = 0
 
         for k in range(1, rock_count + 1):
-            row[-k] = 'O'
+            row[-k] = "O"
         return row
 
     match direction:
-        case 'E':
+        case "E":
             return tuple(map(tuple, map(sort_line, map(list, pattern))))
-        case 'W':
-            return tuple(map(lambda x: tuple(x[::-1]), map(sort_line, map(lambda x: list(x[::-1]), pattern))))
-        case 'N':
-            return transpose_platform(tilt_platform(transpose_platform(pattern, True), 'E'), False)
-        case 'S':
-            return transpose_platform(tilt_platform(transpose_platform(pattern, False), 'E'), True)
+        case "W":
+            return tuple(
+                map(
+                    lambda x: tuple(x[::-1]),
+                    map(sort_line, map(lambda x: list(x[::-1]), pattern)),
+                )
+            )
+        case "N":
+            return transpose_platform(
+                tilt_platform(transpose_platform(pattern, True), "E"), False
+            )
+        case "S":
+            return transpose_platform(
+                tilt_platform(transpose_platform(pattern, False), "E"), True
+            )
 
 
 @functools.cache
-def run_cycles(pattern:  tuple, count: int) -> tuple:
+def run_cycles(pattern: tuple, count: int) -> tuple:
     def cycle_pattern(cycled: tuple = pattern) -> tuple:
-        for direction in ['N', 'W', 'S', 'E']:
+        for direction in ["N", "W", "S", "E"]:
             cycled = tilt_platform(cycled, direction)
         return cycled
 
@@ -168,27 +177,35 @@ def solve(input_: str, cycles: int = 0) -> int:
         sys.setrecursionlimit(2500)
         rotated = run_cycles(rotated, cycles)
     else:
-        rotated = tilt_platform(parsed, 'N')
-    return sum(line.count('O') * (len(rotated) - i) for i, line in enumerate(rotated))
+        rotated = tilt_platform(parsed, "N")
+    return sum(line.count("O") * (len(rotated) - i) for i, line in enumerate(rotated))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     expected = [(136, [])]
     for idx, e in enumerate(expected):
         e_total, e_params = e
         start = time.time()
-        assert (total := solve(TEST_INPUT, *e_params)) == e_total, f'Test {1} for part 1 failed! {total=} {e_total=}'
-        print(f'Part 1: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
+        assert (
+            total := solve(TEST_INPUT, *e_params)
+        ) == e_total, f"Test {1} for part 1 failed! {total=} {e_total=}"
+        print(
+            f"Part 1: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]"
+        )
     start = time.time()
     total = solve(INPUT)
-    print(f'Part 1: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
+    print(f"Part 1: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]")
 
     expected = [(64, [1000])]
     for idx, e in enumerate(expected):
         e_total, e_params = e
         start = time.time()
-        assert (total := solve(TEST_INPUT, *e_params)) == e_total, f'Test {1} for part 2 failed! {total=} {e_total=}'
-        print(f'Part 2: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
+        assert (
+            total := solve(TEST_INPUT, *e_params)
+        ) == e_total, f"Test {1} for part 2 failed! {total=} {e_total=}"
+        print(
+            f"Part 2: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]"
+        )
     start = time.time()
     total = solve(INPUT, 1000)
-    print(f'Part 2: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
+    print(f"Part 2: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]")

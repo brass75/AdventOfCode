@@ -3,7 +3,7 @@ import numpy as np
 
 from aoc_lib import solve_problem
 
-INPUT = '''hgg{m>732:R,A}
+INPUT = """hgg{m>732:R,A}
 vzp{s>1750:A,A}
 kvs{x<1064:dnd,R}
 hq{s<952:jpz,m<3318:qkp,a<2869:vzp,zgn}
@@ -792,9 +792,9 @@ lt{a>2612:R,s<3820:A,R}
 {x=1880,m=646,a=2302,s=258}
 {x=1478,m=255,a=150,s=2157}
 {x=66,m=664,a=245,s=2546}
-{x=1970,m=2533,a=1243,s=709}'''
+{x=1970,m=2533,a=1243,s=709}"""
 
-TEST_INPUT = '''px{a<2006:qkq,m>2090:A,rfg}
+TEST_INPUT = """px{a<2006:qkq,m>2090:A,rfg}
 pv{a>1716:R,A}
 lnx{m>1548:A,A}
 rfg{s<537:gd,x>2440:R,A}
@@ -810,12 +810,12 @@ hdj{m>838:A,pv}
 {x=1679,m=44,a=2067,s=496}
 {x=2036,m=264,a=79,s=2244}
 {x=2461,m=1339,a=466,s=291}
-{x=2127,m=1623,a=2188,s=1013}'''
+{x=2127,m=1623,a=2188,s=1013}"""
 
 
 class Part:
     def __init__(self, part):
-        x, m, a, s = list(map(int, re.findall(r'\d+', part)))
+        x, m, a, s = list(map(int, re.findall(r"\d+", part)))
         self.x = x
         self.m = m
         self.a = a
@@ -823,15 +823,15 @@ class Part:
 
     def __getitem__(self, item) -> int:
         match item:
-            case 'x':
+            case "x":
                 return self.x
-            case 'm':
+            case "m":
                 return self.m
-            case 'a':
+            case "a":
                 return self.a
-            case 's':
+            case "s":
                 return self.s
-        raise KeyError(f'{repr(item)} not found.')
+        raise KeyError(f"{repr(item)} not found.")
 
     @property
     def value(self) -> int:
@@ -840,7 +840,9 @@ class Part:
 
 class Rule:
     def __init__(self, rule: str):
-        system, op, count, result = re.match(r'([a-zAR]+)([<>])?(\d+)?[:]?([a-zAR]+)?', rule).groups()
+        system, op, count, result = re.match(
+            r"([a-zAR]+)([<>])?(\d+)?[:]?([a-zAR]+)?", rule
+        ).groups()
         self.system = system
         self.op = op
         self.count = int(count) if count else None
@@ -851,27 +853,31 @@ class Rule:
         if not self.count:
             return self.system
         check = part[self.system]
-        if self.op == '>' and check > self.count:
+        if self.op == ">" and check > self.count:
             return self.result
-        if self.op == '<' and check < self.count:
+        if self.op == "<" and check < self.count:
             return self.result
         return None
 
     def __str__(self):
-        return f'{self.system}{self.op}{self.count}:{self.result}' if self.count else self.system
+        return (
+            f"{self.system}{self.op}{self.count}:{self.result}"
+            if self.count
+            else self.system
+        )
 
     @property
     def index(self) -> int:
-        return 'xmas'.index(self.system) if self.count else -1
+        return "xmas".index(self.system) if self.count else -1
 
 
 class Workflow:
     def __init__(self, workflow: str):
-        name, flow = re.match(r'([a-z]+){(.*?)}', workflow).groups()
+        name, flow = re.match(r"([a-z]+){(.*?)}", workflow).groups()
         self.name = name
         self.flow = flow
-        self._rules = list(map(Rule, flow.split(',')))
-        self.last = flow.split(',')[-1]
+        self._rules = list(map(Rule, flow.split(",")))
+        self.last = flow.split(",")[-1]
 
     def get_next(self, part: Part) -> str:
         for rule in self.rules:
@@ -887,27 +893,28 @@ class Workflow:
 
 
 def solve_combination(input_: str) -> int:
-
     def evolve(part, item):
         new_row = list(row)
         new_row[part] = item
         return new_row
 
-    flows = {flow.name: flow for flow in map(Workflow, input_.split('\n\n')[0].splitlines())}
-    rows = [('in', [range(1, 4001)] * 4)]
+    flows = {
+        flow.name: flow for flow in map(Workflow, input_.split("\n\n")[0].splitlines())
+    }
+    rows = [("in", [range(1, 4001)] * 4)]
     accepted = 0
     while rows:
         name, row = rows.pop()
-        if name == 'A':
+        if name == "A":
             accepted += np.prod(list(map(len, row)))
             continue
-        if name == 'R':
+        if name == "R":
             continue
         flow = flows[name]
         for rule in flow.rules:
             if not (num := rule.count) or num not in (r := row[rule.index]):
                 continue
-            op = rule.op == '>'
+            op = rule.op == ">"
             splits = [r.start, num + op, r.stop]
             new_ranges = range(*splits[:-1]), range(*splits[1:])
             rows.append((rule.result, evolve(rule.index, new_ranges[op])))
@@ -917,20 +924,20 @@ def solve_combination(input_: str) -> int:
 
 
 def solve(input_: str) -> int:
-    flows, parts = input_.split('\n\n')
+    flows, parts = input_.split("\n\n")
     accepted = 0
     flows = {flow.name: flow for flow in map(Workflow, flows.splitlines())}
     parts = map(Part, parts.splitlines())
     for part in parts:
-        flow: Workflow = flows['in']
-        while (next_flow := flow.get_next(part)) not in ['A', 'R']:
+        flow: Workflow = flows["in"]
+        while (next_flow := flow.get_next(part)) not in ["A", "R"]:
             flow = flows[next_flow]
-        if next_flow == 'A':
+        if next_flow == "A":
             accepted += part.value
     return accepted
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     part1_args = []
     expected_1 = [(19114, [TEST_INPUT, *part1_args])]
     func_1 = solve

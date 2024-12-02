@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-input = '''...766.......821.547.....577......................................387.....................56..........446.793..........292..................
+input = """...766.......821.547.....577......................................387.....................56..........446.793..........292..................
 ...........................%...../.....981..........627..../..........-.....623......610..-..............*..................16......891.....
 ...$...........716..&336.......470.325.................*.84........$..34....*.....+.....#.....*76....#.........303.433........-........&....
 .117../359.#...............595............129..963#..722..........128........192.313........31........887...............234.......-.........
@@ -139,34 +139,38 @@ input = '''...766.......821.547.....577......................................387
 .........*..............671..&...266............/.......................928.-................................434......387/......16.699......
 ......538.581........&....*............%......10.....168....537&....296..*......177...192................-.......470........................
 ..................661......496.346*.....870............*................958....-......*......-....@......101.....+..........................
-..808..............................365..................195.........................90......482.837............................404.214......'''
+..808..............................365..................195.........................90......482.837............................404.214......"""
 
 
 NUMBERS = list(map(str, range(10)))
-NOT_SYMBOLS = [*NUMBERS, '.']
+NOT_SYMBOLS = [*NUMBERS, "."]
 
 
 def part_one():
     schematic = [list(line) for line in input.splitlines()]
     row_len = len(schematic[0]) + 2
     for i, row in enumerate(schematic):
-        schematic[i] = ['.', *row, '.']
-    schematic = [list('.' * row_len), *schematic, list('.' * row_len)]
+        schematic[i] = [".", *row, "."]
+    schematic = [list("." * row_len), *schematic, list("." * row_len)]
     parts = []
     for i, line in enumerate(schematic):
-        part = ''
+        part = ""
         found = False
         for j, c in enumerate(line):
             if c in NUMBERS:
                 part += c
                 if not found:
-                    adjacent = [*schematic[i-1][j-1:j+2], *schematic[i][j-1:j+2], *schematic[i+1][j-1:j+2]]
+                    adjacent = [
+                        *schematic[i - 1][j - 1 : j + 2],
+                        *schematic[i][j - 1 : j + 2],
+                        *schematic[i + 1][j - 1 : j + 2],
+                    ]
                     found = any(c for c in adjacent if c not in NOT_SYMBOLS)
             else:
                 if found and part:
                     parts.append(int(part))
                 found = False
-                part = ''
+                part = ""
     print(sum(parts))
 
 
@@ -182,7 +186,7 @@ def find_adjacent(line: list, center: int) -> list:
             j = center + 1
             while line[j] in NUMBERS:
                 j += 1
-            found.append(int(line[center+1:j]))
+            found.append(int(line[center + 1 : j]))
     else:
         i, j = center, center
         while line[i - 1] in NUMBERS:
@@ -196,17 +200,17 @@ def find_adjacent(line: list, center: int) -> list:
 def part_two():
     schematic = [line for line in input.splitlines()]
     for i, row in enumerate(schematic):
-        schematic[i] = str('.' + row + '.')
+        schematic[i] = str("." + row + ".")
     row_len = len(schematic[0])
-    schematic = ['.' * row_len, *schematic, '.' * row_len]
+    schematic = ["." * row_len, *schematic, "." * row_len]
     total = 0
     for i, line in enumerate(schematic):
         for j, c in enumerate(line):
-            if c != '*':
+            if c != "*":
                 continue
             adjacent = []
             for n in range(3):
-                adjacent.extend(find_adjacent(schematic[i-1 + n], j))
+                adjacent.extend(find_adjacent(schematic[i - 1 + n], j))
             if len(adjacent) == 2:
                 total += adjacent[0] * adjacent[1]
     print(total)

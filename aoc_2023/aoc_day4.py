@@ -2,7 +2,7 @@
 
 import re
 
-input = '''Card   1: 59 65 20 66 55 92 43 23 98 70 | 99 81 56 30 88 55 57 11 90 45 53 28 33 20 84 54 24 64 74 98 36 77 61 82 69
+input = """Card   1: 59 65 20 66 55 92 43 23 98 70 | 99 81 56 30 88 55 57 11 90 45 53 28 33 20 84 54 24 64 74 98 36 77 61 82 69
 Card   2: 62 76 53 69 70 72 81  1 67 78 | 62 24 60 72 67 76 25 46 40 26 28 57 69 70 78 79 81  1 11 15 30 63 68 37 53
 Card   3: 87 81  7 92 88 66 58 22 13 59 | 42 18 31 11 17 62 46 52 22 48 83 99 93  2 26 28 88  4 56 20 25 43 82 89 44
 Card   4: 13 92 15 50 49 10 58 44 84 81 | 69 16  2 58 27 49 67 31 47 53 35 89 75 20 96 44 50 92  3 98 15 81 84 13 10
@@ -199,7 +199,7 @@ Card 194: 82  6 19  4 32 70 92 79 83 42 | 34 83 88 77 99 67 36 30 26 70 42 29 46
 Card 195: 23 10 64 44 82  8 28  3 27 69 | 59 94 61 77 51 78 50 21 90 87  5 74 16 14 71 82 25 17  4 70 93 45 55 98 58
 Card 196: 57 73 14 44 90 97 89 41 30 43 | 85 32 67 53 76 31 93  7 52  5 33 98 86 19 28 45 12 94  1 61 91 92 49 95 82
 Card 197: 41  4  7 92 20 67 54 29 79 32 | 45 64 48 24 56 50 82 12 94 40 69 31 49 99 14 88  6 37 16 18  2 38 90 78 20
-Card 198: 87  3 64 10 88 45 16 40 23 60 | 63 77 36 52 47 76 84 96 19 13 73 39 26 93 21 22  7 15 95 30 33 89 28 20 50'''
+Card 198: 87  3 64 10 88 45 16 40 23 60 | 63 77 36 52 47 76 84 96 19 13 73 39 26 93 21 22  7 15 95 30 33 89 28 20 50"""
 
 # input = '''Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
 # Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19
@@ -212,9 +212,9 @@ Card 198: 87  3 64 10 88 45 16 40 23 60 | 63 77 36 52 47 76 84 96 19 13 73 39 26
 def parse_input() -> list:
     lines = []
     for line in input.splitlines():
-        match = re.search(r'([\d\s]+)\|([\d\s]+)', line)
-        winning, mine = [re.split(r'\s+', s.strip()) for s in match.groups()]
-        lines.append({'winning': winning, 'mine': mine, 'count': 1})
+        match = re.search(r"([\d\s]+)\|([\d\s]+)", line)
+        winning, mine = [re.split(r"\s+", s.strip()) for s in match.groups()]
+        lines.append({"winning": winning, "mine": mine, "count": 1})
     return lines
 
 
@@ -222,27 +222,22 @@ def part_one():
     parsed_lines = parse_input()
     total = 0
     for line in parsed_lines:
-        winning = set(line['winning'])
-        if overlap := winning.intersection(line['mine']):
+        winning = set(line["winning"])
+        if overlap := winning.intersection(line["mine"]):
             total += 2 ** (len(overlap) - 1)
-    print(f'part 1: {total}')
+    print(f"part 1: {total}")
 
 
 def part_two():
     lines = parse_input()
     for i, line in enumerate(lines):
-        winning = set(line['winning'])
-        overlap = winning.intersection(line['mine'])
+        winning = set(line["winning"])
+        overlap = winning.intersection(line["mine"])
         for n in range(len(overlap)):
-            lines[i+n+1]['count'] += line['count']
-    total = sum(line['count'] for line in lines)
-    print(f'part 2: {total}')
+            lines[i + n + 1]["count"] += line["count"]
+    total = sum(line["count"] for line in lines)
+    print(f"part 2: {total}")
 
 
 part_one()
 part_two()
-
-
-
-
-

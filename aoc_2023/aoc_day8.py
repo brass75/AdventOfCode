@@ -2,7 +2,7 @@
 import re
 from math import lcm
 
-INPUT = '''LRRLRRRLRRLRRLRRRLRRLRLLRRRLRRRLRRRLRRRLRRRLRRLLRRRLLRLRRRLRRLRRRLLRRRLRLLRRLRLLRLRLLRRLRRRLRRLLRRRLRRRLRLRRRLRRRLRRRLRRRLRLRRRLLRRRLRRLRRRLRLRRRLRRLRLLLLLRRRLRRRLRRRLRRRLRRLLRLRLRRLRRLLRRRLRRRLRRRLLLRRRLRRRLRRRLRLRRRLLRLRLRRLRRLRRRLRRLRRRLRRRLRRRLRRLLRRRLRRLRRLRLLRRRR
+INPUT = """LRRLRRRLRRLRRLRRRLRRLRLLRRRLRRRLRRRLRRRLRRRLRRLLRRRLLRLRRRLRRLRRRLLRRRLRLLRRLRLLRLRLLRRLRRRLRRLLRRRLRRRLRLRRRLRRRLRRRLRRRLRLRRRLLRRRLRRLRRRLRLRRRLRRLRLLLLLRRRLRRRLRRRLRRRLRRLLRLRLRRLRRLLRRRLRRRLRRRLLLRRRLRRRLRRRLRLRRRLLRLRLRRLRRLRRRLRRLRRRLRRRLRRRLRRLLRRRLRRLRRLRLLRRRR
 
 CTK = (JLT, HRF)
 TQH = (DKT, HGB)
@@ -729,10 +729,10 @@ FDV = (LVJ, FSM)
 PLV = (GRV, SJD)
 XPJ = (BRQ, PSR)
 VJF = (JGS, SLR)
-XLV = (VTR, TGD)'''
+XLV = (VTR, TGD)"""
 
 
-TEST_INPUT = '''RL
+TEST_INPUT = """RL
 
 AAA = (BBB, CCC)
 BBB = (DDD, EEE)
@@ -740,16 +740,16 @@ CCC = (ZZZ, GGG)
 DDD = (DDD, DDD)
 EEE = (EEE, EEE)
 GGG = (GGG, GGG)
-ZZZ = (ZZZ, ZZZ)'''
+ZZZ = (ZZZ, ZZZ)"""
 
-TEST_INPUT2 = '''LLR
+TEST_INPUT2 = """LLR
 
 AAA = (BBB, BBB)
 BBB = (AAA, ZZZ)
 ZZZ = (ZZZ, ZZZ)
-'''
+"""
 
-TEST_INPUT3 = '''LR
+TEST_INPUT3 = """LR
 
 11A = (11B, XXX)
 11B = (XXX, 11Z)
@@ -758,14 +758,14 @@ TEST_INPUT3 = '''LR
 22B = (22C, 22C)
 22C = (22Z, 22Z)
 22Z = (22B, 22B)
-XXX = (XXX, XXX)'''
+XXX = (XXX, XXX)"""
 
 
-LINE_PATTERN = re.compile(r'([\dA-Z]{3}).*?\(([\dA-Z]{3}), ([\dA-Z]{3})\)')
+LINE_PATTERN = re.compile(r"([\dA-Z]{3}).*?\(([\dA-Z]{3}), ([\dA-Z]{3})\)")
 
 
 def parse_input(input_: str) -> tuple[list, dict[str, tuple[str, str]]]:
-    groups = input_.split('\n\n')
+    groups = input_.split("\n\n")
     instructions = list(groups[0])
     data_dict = {}
     for line in groups[1].splitlines():
@@ -776,13 +776,13 @@ def parse_input(input_: str) -> tuple[list, dict[str, tuple[str, str]]]:
 
 def get_next_location(options: tuple, instruction: str) -> str:
     match instruction:
-        case 'R':
+        case "R":
             return options[1]
-        case 'L':
+        case "L":
             return options[0]
 
 
-def solve(input_: str, start: str = 'AAA', end: str = 'ZZZ'):
+def solve(input_: str, start: str = "AAA", end: str = "ZZZ"):
     count = 0
     instructions, data = parse_input(input_)
 
@@ -801,15 +801,15 @@ def solve(input_: str, start: str = 'AAA', end: str = 'ZZZ'):
             new_curr.append(next_location)
         curr = new_curr
 
-    print(f'Part {"2" if end == "Z" else "1"}: count={lcm(*counts)} {"[test]" if input_ != INPUT else ""}')
+    print(
+        f'Part {"2" if end == "Z" else "1"}: count={lcm(*counts)} {"[test]" if input_ != INPUT else ""}'
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     solve(TEST_INPUT)
     solve(TEST_INPUT2)
-    solve(TEST_INPUT3, 'A', 'Z')
+    solve(TEST_INPUT3, "A", "Z")
 
     solve(INPUT)
-    solve(INPUT, 'A', 'Z')
-
-
+    solve(INPUT, "A", "Z")

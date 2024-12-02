@@ -1,6 +1,6 @@
 from aoc_lib import solve_problem
 
-INPUT = '''219051609191782, 68260434807407, 317809635461867 @ 146, 364, -22
+INPUT = """219051609191782, 68260434807407, 317809635461867 @ 146, 364, -22
 292151991892724, 394725036264709, 272229701860796 @ -43, -280, -32
 455400538938496, 167482380286201, 389150487664328 @ -109, 219, -58
 199597051713828, 198498491378597, 230104579246572 @ 134, 104, -62
@@ -299,21 +299,21 @@ INPUT = '''219051609191782, 68260434807407, 317809635461867 @ 146, 364, -22
 244459427182480, 206762645152988, 255548180793568 @ 124, 173, 87
 247904518343169, 354588433650479, 202903172797639 @ 107, -40, 144
 284596102506416, 74467661026157, 422817927914852 @ 51, 356, -175
-346028219022056, 71761937209378, 361082665598801 @ 28, 317, -10'''
+346028219022056, 71761937209378, 361082665598801 @ 28, 317, -10"""
 
-TEST_INPUT = '''19, 13, 30 @ -2,  1, -2
+TEST_INPUT = """19, 13, 30 @ -2,  1, -2
 18, 19, 22 @ -1, -1, -2
 20, 25, 34 @ -2, -2, -4
 12, 31, 28 @ -1, -2, -1
-20, 19, 15 @  1, -5, -3'''
+20, 19, 15 @  1, -5, -3"""
 
 
 class Hail:
     def __init__(self, definition: str, min_: int, max_: int):
         self.definition = definition
-        position, velocity = definition.split('@')
-        x, y, z = map(float, position.split(','))
-        vx, vy, vz = map(float, velocity.split(','))
+        position, velocity = definition.split("@")
+        x, y, z = map(float, position.split(","))
+        vx, vy, vz = map(float, velocity.split(","))
         self.x1 = x
         self.y1 = y
         self.z1 = z
@@ -326,22 +326,38 @@ class Hail:
         self.max = max_
         self.min = min_
 
-        self.y_intercept = line_intersection((self.x1, self.y1), (self.x2, self.y2),
-                                             (self.min, self.min), (self.min, self.max))
+        self.y_intercept = line_intersection(
+            (self.x1, self.y1),
+            (self.x2, self.y2),
+            (self.min, self.min),
+            (self.min, self.max),
+        )
         if self.y_intercept and not self.min <= self.y_intercept[1] <= self.max:
             self.y_intercept = None
         if not self.y_intercept:
-            self.y_intercept = line_intersection((self.x1, self.y1), (self.x2, self.y2),
-                                                 (self.max, self.min), (self.max, self.max))
+            self.y_intercept = line_intersection(
+                (self.x1, self.y1),
+                (self.x2, self.y2),
+                (self.max, self.min),
+                (self.max, self.max),
+            )
             if self.y_intercept and not self.min <= self.y_intercept[1] <= self.max:
                 self.y_intercept = None
-        self.x_intercept = line_intersection((self.x1, self.y1), (self.x2, self.y2),
-                                             (self.min, self.min), (self.max, self.min))
+        self.x_intercept = line_intersection(
+            (self.x1, self.y1),
+            (self.x2, self.y2),
+            (self.min, self.min),
+            (self.max, self.min),
+        )
         if self.x_intercept and not self.min <= self.x_intercept[0] <= self.max:
             self.x_intercept = None
         if not self.x_intercept:
-            self.x_intercept = line_intersection((self.x1, self.y1), (self.x2, self.y2),
-                                                 (self.min, self.max), (self.max, self.max))
+            self.x_intercept = line_intersection(
+                (self.x1, self.y1),
+                (self.x2, self.y2),
+                (self.min, self.max),
+                (self.max, self.max),
+            )
             if self.x_intercept and not self.min <= self.x_intercept[0] <= self.max:
                 self.x_intercept = None
 
@@ -358,27 +374,38 @@ class Hail:
             elif velocity > 0:
                 return first < second
             return first == second
+
         if not all([*self.line_segment, *other.line_segment]):
             return False
         if intersection := line_intersection(*self.line_segment, *other.line_segment):
-            if self.min <= intersection[0] <= self.max and self.min <= intersection[1] <= self.max:
+            if (
+                self.min <= intersection[0] <= self.max
+                and self.min <= intersection[1] <= self.max
+            ):
                 ix, iy = intersection
-                intercepts = (all(check_direction(f, s, v) for f, s, v in [(self.x1, ix, self.vx),
-                                                                           (self.y1, iy, self.vy)])
-                              and all(check_direction(f, s, v) for f, s, v in [(other.x1, ix, other.vx),
-                                                                              (other.y1, iy, other.vy)]))
+                intercepts = all(
+                    check_direction(f, s, v)
+                    for f, s, v in [(self.x1, ix, self.vx), (self.y1, iy, self.vy)]
+                ) and all(
+                    check_direction(f, s, v)
+                    for f, s, v in [(other.x1, ix, other.vx), (other.y1, iy, other.vy)]
+                )
                 return intercepts
         return False
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(definition={repr(self.definition)})'
+        return f"{self.__class__.__name__}(definition={repr(self.definition)})"
 
     def __str__(self):
         return self.definition
 
 
-def line_intersection(A: tuple[float, float], B: tuple[float, float], C: tuple[float, float],
-                      D: tuple[float, float]) -> tuple[float, float] | None:
+def line_intersection(
+    A: tuple[float, float],
+    B: tuple[float, float],
+    C: tuple[float, float],
+    D: tuple[float, float],
+) -> tuple[float, float] | None:
     # Line AB represented as a1x + b1y = c1
     a1 = B[1] - A[1]
     b1 = A[0] - B[0]
@@ -402,10 +429,14 @@ def solve(input_: str, min_: int, max_: int) -> int:
     storm = []
     for line in input_.splitlines():
         storm.append(Hail(line, min_, max_))
-    return sum(storm[i].intercepts(storm[j]) for i in range(len(storm)) for j in range(i+1, len(storm)))
+    return sum(
+        storm[i].intercepts(storm[j])
+        for i in range(len(storm))
+        for j in range(i + 1, len(storm))
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     part1_args = [200000000000000, 400000000000000]
     expected_1 = [(2, [TEST_INPUT, 7, 27])]
     func_1 = solve

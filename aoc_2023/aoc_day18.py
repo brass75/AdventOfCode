@@ -1,6 +1,6 @@
 from aoc_lib import solve_problem, calculate_polygon_area
 
-INPUT = '''R 8 (#4cd962)
+INPUT = """R 8 (#4cd962)
 U 10 (#6d5eb3)
 R 7 (#4cd960)
 U 3 (#5f8083)
@@ -707,9 +707,9 @@ D 4 (#40f7d1)
 L 3 (#5f0202)
 U 4 (#1075f1)
 L 6 (#2bf192)
-U 13 (#0580f3)'''
+U 13 (#0580f3)"""
 
-TEST_INPUT = '''R 6 (#70c710)
+TEST_INPUT = """R 6 (#70c710)
 D 5 (#0dc571)
 L 2 (#5713f0)
 D 2 (#d2c081)
@@ -723,17 +723,17 @@ R 2 (#7807d2)
 U 3 (#a77fa3)
 L 2 (#015232)
 U 2 (#7a21e3)
-'''
+"""
 
 DIR_MAP = {
-    'R': lambda x, y, l: (x + l, y),
-    'D': lambda x, y, l: (x, y + l),
-    'L': lambda x, y, l: (x - l, y),
-    'U': lambda x, y, l: (x, y - l),
-    '0': lambda x, y, l: (x + l, y),
-    '1': lambda x, y, l: (x, y + l),
-    '2': lambda x, y, l: (x - l, y),
-    '3': lambda x, y, l: (x, y - l),
+    "R": lambda x, y, length: (x + length, y),
+    "D": lambda x, y, length: (x, y + length),
+    "L": lambda x, y, length: (x - length, y),
+    "U": lambda x, y, length: (x, y - length),
+    "0": lambda x, y, length: (x + length, y),
+    "1": lambda x, y, length: (x, y + length),
+    "2": lambda x, y, length: (x - length, y),
+    "3": lambda x, y, length: (x, y - length),
 }
 
 
@@ -756,7 +756,7 @@ def solve(input_: str, use_instruction: bool = False) -> int:
     return (perimeter // 2) + int(calculate_polygon_area(mapped)) + 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     part1_args = []
     expected_1 = [(62, [TEST_INPUT])]
     func_1 = solve

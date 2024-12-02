@@ -3,7 +3,7 @@ import sys
 from aoc_lib import solve_problem, GridBase
 
 
-INPUT = '''#.###########################################################################################################################################
+INPUT = """#.###########################################################################################################################################
 #.....#...#...#.............#.....#...#.....#...###...###...#.........#...#...#...#...#...#...#...#####...#.........#.....###...#...........#
 #####.#.#.#.#.#.###########.#.###.#.#.#.###.#.#.###.#.###.#.#.#######.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#####.#.#.#######.#.###.###.#.#.#########.#
 #.....#.#.#.#.#.#...........#...#.#.#...#...#.#...#.#...#.#.#.....#...#.#...#...#...#.#.#.#.#.#.#.....#.#.#.......#.#.#...#...#.#.#.........#
@@ -143,9 +143,9 @@ INPUT = '''#.###################################################################
 #.#.#.#.#.#...#.#.#.....#.#.#...#...#.#.#.>.>.#.#.#.#.#.#.#.#...#...#.#.#...#.#.#.>.>.#...#.#.....#.#.....#.....#.#.#.#...#.#...#...#...#...#
 #.#.#.#.#.###.#.#.#.#####.#.#.#.#.#.#.#.#.#####.#.#.#.#.#.#.###.###.#.#.#.###.#.#######.###.#.#####.#.#########.#.#.#.#####.###.###.###.#.#.#
 #...#...#.....#...#.......#...#...#...#...#####...#...#...#.....###...#...###...#######.....#.......#...........#...#.......###.....###...#.#
-###########################################################################################################################################.#'''
+###########################################################################################################################################.#"""
 
-TEST_INPUT = '''#.#####################
+TEST_INPUT = """#.#####################
 #.......#########...###
 #######.#########.#.###
 ###.....#.>.>.###.#.###
@@ -167,15 +167,16 @@ TEST_INPUT = '''#.#####################
 #...#...#.#.>.>.#.>.###
 #.###.###.#.###.#.#v###
 #.....###...###...#...#
-#####################.#'''
+#####################.#"""
 
 
-def get_intersections_and_distances(grid: GridBase, start: tuple[int, int], end: tuple[int, int],
-                                    ignore_slopes: bool) -> dict:
-    """ Builds a dictionary of intersections and the distance(s) to the next intersection(s) """
+def get_intersections_and_distances(
+    grid: GridBase, start: tuple[int, int], end: tuple[int, int], ignore_slopes: bool
+) -> dict:
+    """Builds a dictionary of intersections and the distance(s) to the next intersection(s)"""
     valid_steps = set()
     for coords, value in grid.items:
-        if value != '#' and len(list(handle_slopes(coords, grid, ignore_slopes))) >= 2:
+        if value != "#" and len(list(handle_slopes(coords, grid, ignore_slopes))) >= 2:
             valid_steps.add(coords)
     valid_steps.update((start, end))
     reduced = {}
@@ -200,38 +201,44 @@ def get_intersections_and_distances(grid: GridBase, start: tuple[int, int], end:
 
 
 def find_entry(grid: GridBase, start: bool = True) -> tuple[int, int] | None:
-    """ Find the entry/exit point of the grid. """
+    """Find the entry/exit point of the grid."""
     y = 0 if start else grid.height - 1
     for p in ((x, y) for x in range(grid.length)):
-        if grid[p] == '.':
+        if grid[p] == ".":
             return p
     return None
 
 
 def handle_slopes(p: tuple[int, int], grid: GridBase, ignore_slopes: bool = False):
-    """ Get the next point(s) for the current location in the grid. """
+    """Get the next point(s) for the current location in the grid."""
     adjacents = ((0, 1), (1, 0), (0, -1), (-1, 0))
     if not ignore_slopes:
         if curr := grid.get(p):
             match curr:
-                case '^':
+                case "^":
                     adjacents = [(0, -1)]
-                case 'v':
+                case "v":
                     adjacents = [(0, 1)]
-                case '<':
+                case "<":
                     adjacents = [(-1, 0)]
-                case '>':
+                case ">":
                     adjacents = [(1, 0)]
     for dx, dy in adjacents:
         next_possible = (p[0] + dx, p[1] + dy)
         # Set the default so we don't need to do 2 checks.
-        if grid.get(next_possible, '#') != '#':
+        if grid.get(next_possible, "#") != "#":
             yield next_possible
 
 
-def dfs(grid: GridBase, current_location: tuple[int, int], path: list, path_set: set, end: tuple[int, int],
-        ignore_slopes: bool = False):
-    """ Depth first search of all paths in a grid. Updates the longest path found. """
+def dfs(
+    grid: GridBase,
+    current_location: tuple[int, int],
+    path: list,
+    path_set: set,
+    end: tuple[int, int],
+    ignore_slopes: bool = False,
+):
+    """Depth first search of all paths in a grid. Updates the longest path found."""
     global longest
     if current_location == end:
         longest = max(longest, len(path))
@@ -245,8 +252,14 @@ def dfs(grid: GridBase, current_location: tuple[int, int], path: list, path_set:
             path.pop(-1)
 
 
-def dfs2(cur: tuple[int, int], path_set: set, total_dist: int, end: tuple[int, int], reduced: dict):
-    """ Depth first search of all paths in a grid. Updates the longest path found. Uses a data set of intersections. """
+def dfs2(
+    cur: tuple[int, int],
+    path_set: set,
+    total_dist: int,
+    end: tuple[int, int],
+    reduced: dict,
+):
+    """Depth first search of all paths in a grid. Updates the longest path found. Uses a data set of intersections."""
     for dist, next_step in reduced[cur]:
         if next_step not in path_set:
             if next_step == end:
@@ -266,13 +279,19 @@ def solve(input_: str, ignore_slopes: bool = False) -> int:
     start = find_entry(grid, True)
     end = find_entry(grid, False)
     if ignore_slopes:
-        dfs2(start, set(), 0, end, get_intersections_and_distances(grid, start, end, ignore_slopes))
+        dfs2(
+            start,
+            set(),
+            0,
+            end,
+            get_intersections_and_distances(grid, start, end, ignore_slopes),
+        )
     else:
         dfs(grid, start, list(), set(), end, ignore_slopes)
     return longest
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Large recursion depth so set it here globally.
     sys.setrecursionlimit(20_000)
     # Since the workhorse is a recursive function that doesn't return a value we need a global to handle it.

@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-input = '''eighttkbtzjz6nineeight
+input = """eighttkbtzjz6nineeight
 5knjbxgvhktvfcq89onefive
 hnjcrxeightonejnlvm4hstmcsevensix
 trsdgcxcseven39dpmzs
@@ -999,20 +999,33 @@ six2qllhlxhr1foursixz8
 7dvt
 blhsm4xcrbrf68ninezvhhtqgphnzxlhl
 9dvjvfourtcthree
-onethreenfkgrvsevenkczctlgkt7'''
+onethreenfkgrvsevenkczctlgkt7"""
 
 
 def part_one():
-    digits = [[c for c in s if c in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']] for s in input.split('\n')]
-    converted = list(map(int, (f'{group[0]}{group[-1]}' for group in digits)))
-    print(f'Part 1: {sum(converted)}')
+    digits = [
+        [c for c in s if c in ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]]
+        for s in input.split("\n")
+    ]
+    converted = list(map(int, (f"{group[0]}{group[-1]}" for group in digits)))
+    print(f"Part 1: {sum(converted)}")
 
 
 def part_two():
-    num_words = {'one': 1,'two': 2, 'three': 3,'four': 4,'five': 5,'six': 6,'seven':7, 'eight': 8,'nine': 9}
+    num_words = {
+        "one": 1,
+        "two": 2,
+        "three": 3,
+        "four": 4,
+        "five": 5,
+        "six": 6,
+        "seven": 7,
+        "eight": 8,
+        "nine": 9,
+    }
 
     digits = []
-    for line in input.split('\n'):
+    for line in input.split("\n"):
         curr = []
         while line:
             for word, value in num_words.items():
@@ -1022,14 +1035,14 @@ def part_two():
             else:
                 try:
                     curr.append(int(line[0]))
-                except:
+                except Exception:
                     pass
             line = line[1:]
         digits.append(curr)
 
-    converted = list(map(int, (f'{group[0]}{group[-1]}' for group in digits)))
+    converted = list(map(int, (f"{group[0]}{group[-1]}" for group in digits)))
 
-    print(f'Part 2: {sum(converted)}')
+    print(f"Part 2: {sum(converted)}")
 
 
 part_one()

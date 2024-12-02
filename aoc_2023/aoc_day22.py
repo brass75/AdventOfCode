@@ -4,7 +4,7 @@ from copy import deepcopy
 
 from aoc_lib import solve_problem, HashableDict
 
-INPUT = '''5,0,238~8,0,238
+INPUT = """5,0,238~8,0,238
 2,4,126~5,4,126
 0,4,224~0,6,224
 0,0,294~0,1,294
@@ -1449,7 +1449,7 @@ INPUT = '''5,0,238~8,0,238
 2,6,126~2,9,126
 5,5,72~7,5,72
 7,1,104~7,4,104
-1,5,211~3,5,211'''
+1,5,211~3,5,211"""
 
 TEST_INPUT = """1,0,1~1,2,1
 0,0,2~2,0,2
@@ -1462,6 +1462,7 @@ TEST_INPUT = """1,0,1~1,2,1
 
 g_bricks = None
 
+
 def parse_input(input_: str) -> HashableDict:
     bricks = HashableDict()
     for i, line in enumerate(input_.splitlines()):
@@ -1469,17 +1470,28 @@ def parse_input(input_: str) -> HashableDict:
         start_x, start_y, start_z = map(int, (n for n in start.split(",")))
         end_x, end_y, end_z = map(int, (n for n in end.split(",")))
 
-        bricks[chr(ord("@") + i + 1)] = tuple((x, y, z)
-                                              for x in range(start_x, end_x + 1)
-                                              for y in range(start_y, end_y + 1)
-                                              for z in range(start_z, end_z + 1))
+        bricks[chr(ord("@") + i + 1)] = tuple(
+            (x, y, z)
+            for x in range(start_x, end_x + 1)
+            for y in range(start_y, end_y + 1)
+            for z in range(start_z, end_z + 1)
+        )
     return bricks
 
 
-def get_support(brick_key: str, block_coords: list[tuple[int, int, int]], bricks: dict, over: bool = False,
-                ignore_key: str = None) -> Generator:
-    """ Returns the set of blocks supporting (over = False) or supported by (over = True) the block at brick_key. """
-    test_z = min(c[-1] for c in block_coords) - 1 if over else max(c[-1] for c in block_coords) + 1
+def get_support(
+    brick_key: str,
+    block_coords: list[tuple[int, int, int]],
+    bricks: dict,
+    over: bool = False,
+    ignore_key: str = None,
+) -> Generator:
+    """Returns the set of blocks supporting (over = False) or supported by (over = True) the block at brick_key."""
+    test_z = (
+        min(c[-1] for c in block_coords) - 1
+        if over
+        else max(c[-1] for c in block_coords) + 1
+    )
     yield from {
         test_brick_key
         for x, y, _ in block_coords
@@ -1490,27 +1502,37 @@ def get_support(brick_key: str, block_coords: list[tuple[int, int, int]], bricks
 
 
 def get_at_xy(brick_key: str, x: int, y: int, bricks: dict) -> Generator:
-    """ Return all bricks in the dictionary that inhabit (x, y) for all z that are not brick_key. """
-    yield from (block_z for block_coords in (v for k, v in bricks.items() if brick_key != k)
-                for block_x, block_y, block_z in block_coords
-                if block_x == x and block_y == y)
+    """Return all bricks in the dictionary that inhabit (x, y) for all z that are not brick_key."""
+    yield from (
+        block_z
+        for block_coords in (v for k, v in bricks.items() if brick_key != k)
+        for block_x, block_y, block_z in block_coords
+        if block_x == x and block_y == y
+    )
 
 
 def try_fall_brick(brick_key: str, bricks: dict) -> bool:
-    """ Return whether a block can fall or not. """
+    """Return whether a block can fall or not."""
     if (lowest_z := bricks[brick_key][0][2]) <= 1:
         return False
     return not any(
-        True for block_x, block_y, block_z in (coords for coords in bricks[brick_key] if coords[-1] <= lowest_z)
-        if block_z - 1 in get_at_xy(brick_key, block_x, block_y, bricks))
+        True
+        for block_x, block_y, block_z in (
+            coords for coords in bricks[brick_key] if coords[-1] <= lowest_z
+        )
+        if block_z - 1 in get_at_xy(brick_key, block_x, block_y, bricks)
+    )
 
 
 @functools.cache
 def fall(bricks: HashableDict):
-    """ Recursively drop the bricks until they're all at the lowest possible point. """
+    """Recursively drop the bricks until they're all at the lowest possible point."""
     have_fallen = False
-    for brick_key, block_coords in ((brick_key, block_coords) for brick_key, block_coords in bricks.items()
-                                    if try_fall_brick(brick_key, bricks)):
+    for brick_key, block_coords in (
+        (brick_key, block_coords)
+        for brick_key, block_coords in bricks.items()
+        if try_fall_brick(brick_key, bricks)
+    ):
         bricks[brick_key] = tuple(tuple((x, y, z - 1) for x, y, z in block_coords))
         have_fallen = True
     if have_fallen:
@@ -1519,19 +1541,36 @@ def fall(bricks: HashableDict):
 
 @functools.cache
 def chain_size(bricks: HashableDict, brick_key: str, counter: int) -> int:
-    """ Determine the number of bricks that will fall if the brick at brick_key is removed. (Part 2) """
+    """Determine the number of bricks that will fall if the brick at brick_key is removed. (Part 2)"""
     brick = bricks.pop(brick_key)
-    for support_brick_key in (support_brick_key for support_brick_key in get_support(brick_key, brick, bricks)
-                              if not any(get_support(support_brick_key, bricks[support_brick_key], bricks, True))):
+    for support_brick_key in (
+        support_brick_key
+        for support_brick_key in get_support(brick_key, brick, bricks)
+        if not any(
+            get_support(support_brick_key, bricks[support_brick_key], bricks, True)
+        )
+    ):
         counter += chain_size(bricks, support_brick_key, 1)
     return counter
 
 
 def removal_check(bricks: dict) -> int:
-    """ Determine the number of bricks that can be safely removed without the entire structure collapsing. (Part 1) """
-    return sum(all(any(get_support(supporter_brick_key, bricks[supporter_brick_key], bricks, True, brick_key))
-                   for supporter_brick_key in get_support(brick_key, brick, bricks))
-               for brick_key, brick in bricks.items())
+    """Determine the number of bricks that can be safely removed without the entire structure collapsing. (Part 1)"""
+    return sum(
+        all(
+            any(
+                get_support(
+                    supporter_brick_key,
+                    bricks[supporter_brick_key],
+                    bricks,
+                    True,
+                    brick_key,
+                )
+            )
+            for supporter_brick_key in get_support(brick_key, brick, bricks)
+        )
+        for brick_key, brick in bricks.items()
+    )
 
 
 def solve(input_: str, remove: bool = False) -> int:
@@ -1547,10 +1586,14 @@ def solve(input_: str, remove: bool = False) -> int:
     else:
         bricks = parse_input(input_)
         fall(bricks)
-    return removal_check(bricks) if not remove else sum(chain_size(deepcopy(bricks), key, 0) for key in bricks)
+    return (
+        removal_check(bricks)
+        if not remove
+        else sum(chain_size(deepcopy(bricks), key, 0) for key in bricks)
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     part1_args = []
     expected_1 = [(5, [TEST_INPUT])]
     func_1 = solve

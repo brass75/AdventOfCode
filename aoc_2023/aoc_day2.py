@@ -2,7 +2,7 @@
 
 import re
 
-input = '''Game 1: 4 green, 7 blue; 2 blue, 4 red; 5 blue, 2 green, 2 red; 1 green, 3 red, 9 blue; 3 green, 9 blue; 7 green, 2 blue, 2 red
+input = """Game 1: 4 green, 7 blue; 2 blue, 4 red; 5 blue, 2 green, 2 red; 1 green, 3 red, 9 blue; 3 green, 9 blue; 7 green, 2 blue, 2 red
 Game 2: 1 blue, 2 red; 1 green, 2 blue, 1 red; 1 red, 5 green; 3 red, 2 blue, 8 green; 3 blue, 2 red, 4 green; 2 blue, 4 green, 3 red
 Game 3: 7 red, 7 blue, 9 green; 15 green, 4 red, 8 blue; 3 green, 12 blue, 6 red
 Game 4: 4 blue, 11 green, 6 red; 4 green, 2 red; 12 red, 1 blue, 3 green
@@ -101,15 +101,11 @@ Game 96: 1 blue, 12 green, 1 red; 3 blue, 1 green, 5 red; 2 blue, 8 red, 10 gree
 Game 97: 18 blue, 7 red, 11 green; 6 red, 3 blue, 14 green; 1 red, 13 blue, 4 green
 Game 98: 5 blue, 2 green, 8 red; 12 red; 13 red, 4 blue, 4 green; 7 red, 11 blue; 10 blue, 2 green, 2 red; 6 red, 12 blue
 Game 99: 4 green, 2 blue, 4 red; 9 blue, 11 red, 1 green; 5 green
-Game 100: 2 blue, 12 green; 6 green, 1 red, 12 blue; 1 green, 5 blue, 1 red; 1 red, 12 green, 6 blue; 16 blue, 3 green'''
+Game 100: 2 blue, 12 green; 6 green, 1 red, 12 blue; 1 green, 5 blue, 1 red; 1 red, 12 green, 6 blue; 16 blue, 3 green"""
 
-GAME_PATTERN = re.compile(r'Game (\d+):')
-COLOR_PATTERNS = r'\d+'
-MAPPINGS = {
-    'red': 12,
-    'green': 13,
-    'blue': 14
-}
+GAME_PATTERN = re.compile(r"Game (\d+):")
+COLOR_PATTERNS = r"\d+"
+MAPPINGS = {"red": 12, "green": 13, "blue": 14}
 
 
 def part_one():
@@ -117,25 +113,30 @@ def part_one():
     for line in input.splitlines():
         game = int(GAME_PATTERN.search(line).group(1))
         for color, max_value in MAPPINGS.items():
-            if max(map(int, re.findall(rf'({COLOR_PATTERNS}) {color}', line))) > max_value:
+            if (
+                max(map(int, re.findall(rf"({COLOR_PATTERNS}) {color}", line)))
+                > max_value
+            ):
                 break
         else:
             total += game
 
-    print(f'Part 1: {total}')
+    print(f"Part 1: {total}")
 
 
 def part_two():
     line_power = []
     for line in input.splitlines():
-        line_vals = (max(map(int, re.findall(rf'({COLOR_PATTERNS}) {color}', line))) for color in MAPPINGS)
+        line_vals = (
+            max(map(int, re.findall(rf"({COLOR_PATTERNS}) {color}", line)))
+            for color in MAPPINGS
+        )
         power = 1
         for line_val in line_vals:
             power *= line_val
         line_power.append(power)
-    print(f'Part 2: {sum(line_power)}')
+    print(f"Part 2: {sum(line_power)}")
 
 
 part_one()
 part_two()
-

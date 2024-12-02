@@ -1,10 +1,8 @@
 #! /usr/bin/env python3
 
 import re
-from collections import defaultdict
-from multiprocessing.pool import Pool
 
-input = '''seeds: 1132132257 323430997 2043754183 4501055 2539071613 1059028389 1695770806 60470169 2220296232 251415938 1673679740 6063698 962820135 133182317 262615889 327780505 3602765034 194858721 2147281339 37466509
+input = """seeds: 1132132257 323430997 2043754183 4501055 2539071613 1059028389 1695770806 60470169 2220296232 251415938 1673679740 6063698 962820135 133182317 262615889 327780505 3602765034 194858721 2147281339 37466509
 
 seed-to-soil map:
 1280158874 0 45923291
@@ -257,7 +255,7 @@ humidity-to-location map:
 4078004082 1582584278 83884093
 1417647882 536254728 80660086
 58880743 755780198 186663599
-2208366309 3745872876 74630643'''
+2208366309 3745872876 74630643"""
 
 # input = '''seeds: 79 14 55 13
 #
@@ -293,24 +291,19 @@ humidity-to-location map:
 # 60 56 37
 # 56 93 4'''
 
-KEYS = ['soil',
-        'fertilizer',
-        'water',
-        'light',
-        'temperature',
-        'humidity',
-        'location'
-        ]
+KEYS = ["soil", "fertilizer", "water", "light", "temperature", "humidity", "location"]
 
 
 # I tried but I couldn't figure it out. Used
 # https://github.com/morgoth1145/advent-of-code/blob/5311ed667714398cf02d9b2bc2a4e88f53f7b0dc/2023/05/solution.py
 # to help.
 def get_seed_data(data, len_func) -> int:
-    groups = data.split('\n\n')
-    seed_ranges = len_func(list(map(int, re.findall(r'\d+', groups[0]))))
+    groups = data.split("\n\n")
+    seed_ranges = len_func(list(map(int, re.findall(r"\d+", groups[0]))))
     for group in groups[1:]:
-        mappings = [tuple(map(int, re.findall(r'\d+', line))) for line in group.splitlines()[1:]]
+        mappings = [
+            tuple(map(int, re.findall(r"\d+", line))) for line in group.splitlines()[1:]
+        ]
 
         new_ranges = []
         for start, seed_len in seed_ranges:
@@ -336,13 +329,15 @@ def get_seed_data(data, len_func) -> int:
 
 
 def part_one():
-    print(f'part_one: {get_seed_data(input, lambda l: [(n, 1) for n in l])}')
+    print(f"part_one: {get_seed_data(input, lambda list_: [(n, 1) for n in list_])}")
 
 
 def part_two():
-    print(f'part_two: {get_seed_data(input, lambda l: list(zip(l[::2], l[1::2])))}')
+    print(
+        f"part_two: {get_seed_data(input, lambda list_: list(zip(list_[::2], list_[1::2])))}"
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     part_one()
     part_two()

@@ -1,7 +1,7 @@
 from aoc_lib import solve_problem
 from heapq import nlargest
 
-INPUT = '''9524
+INPUT = """9524
 12618
 6755
 2121
@@ -2254,9 +2254,9 @@ INPUT = '''9524
 5347
 5630
 5721
-6630'''
+6630"""
 
-TEST_INPUT = '''1000
+TEST_INPUT = """1000
 2000
 3000
 
@@ -2269,15 +2269,15 @@ TEST_INPUT = '''1000
 8000
 9000
 
-10000'''
+10000"""
 
 
 def solve(input_: str, count: int) -> int:
-    calories = [(map(int, group.splitlines())) for group in input_.split('\n\n')]
+    calories = [(map(int, group.splitlines())) for group in input_.split("\n\n")]
     return sum(nlargest(count, map(sum, calories)))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     part1_args = [1]
     expected_1 = [(24000, [TEST_INPUT, *part1_args])]
     func_1 = solve

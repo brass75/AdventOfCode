@@ -1,12 +1,10 @@
-import functools
 from abc import abstractmethod
-from collections import deque, defaultdict
-from enum import Enum
+from collections import deque
 from math import lcm
 
 from aoc_lib import solve_problem
 
-INPUT = '''%rp -> gq, sd
+INPUT = """%rp -> gq, sd
 &kh -> cs
 %jz -> pl, jb
 %dx -> tx
@@ -63,19 +61,19 @@ broadcaster -> fm, hv, kc, bv
 &cs -> rx
 %gq -> dp
 %rg -> zn
-&sd -> zk, kf, gq, lz, kc, vf'''
+&sd -> zk, kf, gq, lz, kc, vf"""
 
-TEST_INPUT = '''broadcaster -> a, b, c
+TEST_INPUT = """broadcaster -> a, b, c
 %a -> b
 %b -> c
 %c -> inv
-&inv -> a'''
+&inv -> a"""
 
-TEST_INPUT2 = '''broadcaster -> a
+TEST_INPUT2 = """broadcaster -> a
 %a -> inv, con
 &inv -> b
 %b -> con
-&con -> output'''
+&con -> output"""
 
 
 class Pulse:
@@ -85,20 +83,20 @@ class Pulse:
 
 class Module:
     def __init__(self, definition: str):
-        name, destinations = definition.split(' -> ')
-        self.name = name.removeprefix('&').removeprefix('%')
+        name, destinations = definition.split(" -> ")
+        self.name = name.removeprefix("&").removeprefix("%")
         self.definition = definition
-        self.destinations = list(map(str.strip, destinations.split(',')))
+        self.destinations = list(map(str.strip, destinations.split(",")))
         self.receivers = []
 
     @staticmethod
     def from_def(definition: str):
         match definition[0]:
-            case '%':
+            case "%":
                 return FlipFlop(definition)
-            case '&':
+            case "&":
                 return Conjunction(definition)
-            case 'b':
+            case "b":
                 return Broadcaster(definition)
 
     def __bool__(self):
@@ -117,7 +115,9 @@ class FlipFlop(Module):
         super().__init__(definition)
         self.on = False
 
-    def handle_pulse(self, pulse: bool, sender: str) -> tuple[bool, list[str], str] | None:
+    def handle_pulse(
+        self, pulse: bool, sender: str
+    ) -> tuple[bool, list[str], str] | None:
         if pulse == Pulse.LOW:
             self.on = not self.on
             return self.on, self.destinations, self.name
@@ -147,7 +147,7 @@ class Broadcaster(Module):
 
 
 def trace_receivers(module: Module, modules: dict, found: set = None) -> set:
-    if module.name == 'broadcaster':
+    if module.name == "broadcaster":
         return found
     for receiver in module.receivers:
         if receiver.name not in found:
@@ -158,19 +158,21 @@ def trace_receivers(module: Module, modules: dict, found: set = None) -> set:
 def solve(input_: str, max_iterations: int = 0) -> int:
     results = {Pulse.HIGH: 0, Pulse.LOW: 0}
     q = deque()
-    modules = {module.name: module for module in map(Module.from_def, input_.splitlines())}
+    modules = {
+        module.name: module for module in map(Module.from_def, input_.splitlines())
+    }
     for module in modules.values():
         module.set_receivers(modules.values())
 
     rx_sender = None
     for module in modules.values():
-        if 'rx' in module.destinations:
+        if "rx" in module.destinations:
             rx_sender = module
             break
     rx_receivers = [r.name for r in rx_sender.receivers] if rx_sender else []
     found = {module: 0 for module in rx_receivers}
     for i in range(max_iterations or 5_000):
-        q.append((Pulse.LOW, ['broadcaster'], 'button'))
+        q.append((Pulse.LOW, ["broadcaster"], "button"))
         while q:
             pulse, destinations, sender = q.popleft()
             # Part 2
@@ -191,11 +193,11 @@ def solve(input_: str, max_iterations: int = 0) -> int:
     return high * low
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     part1_args = [1000]
     expected_1 = [
         (32000000, [TEST_INPUT, *part1_args]),
-        (11687500, [TEST_INPUT2, *part1_args])
+        (11687500, [TEST_INPUT2, *part1_args]),
     ]
     func_1 = solve
 

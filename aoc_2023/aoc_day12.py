@@ -1,7 +1,7 @@
 import functools
 from itertools import starmap
 
-INPUT = '''#??#???.??#?#?#??#?. 6,8,2
+INPUT = """#??#???.??#?#?#??#?. 6,8,2
 ?????????#?#.#?.?.# 4,3,1,1,1
 .???#?#????..????. 1,4,1,1,2,1
 ??????#?.?. 3,2,1
@@ -1000,27 +1000,29 @@ INPUT = '''#??#???.??#?#?#??#?. 6,8,2
 #?????#????? 2,5,1
 ??#?#?????.#?#?? 6,4
 ..???#??????. 1,1,5
-.?.?#.#???#???? 1,1,1,4'''
+.?.?#.#???#???? 1,1,1,4"""
 
-TEST_INPUT = '''???.### 1,1,3
+TEST_INPUT = """???.### 1,1,3
 .??..??...?##. 1,1,3
 ?#?#?#?#?#?#?#? 1,3,1,6
 ????.#...#... 4,1,1
 ????.######..#####. 1,6,5
-?###???????? 3,2,1'''
+?###???????? 3,2,1"""
 
 
 def parse_input(input_: str) -> list[tuple[str, tuple]]:
     rc = []
     for line in input_.splitlines():
         pattern, values = line.split()
-        values = tuple(map(int, values.split(',')))
+        values = tuple(map(int, values.split(",")))
         rc.append((pattern, values))
     return rc
 
 
 @functools.cache
-def solve_row(line: str, blocks: tuple[int,], idx: int, bidx: int, curr:int, checks:tuple):
+def solve_row(
+    line: str, blocks: tuple[int,], idx: int, bidx: int, curr: int, checks: tuple
+):
     """
     Solve a single row for all possibilities.
     Uses functools.cache decorator to memoize and make it run in a reasonable amount of time.
@@ -1046,15 +1048,21 @@ def solve_row(line: str, blocks: tuple[int,], idx: int, bidx: int, curr:int, che
         if bidx == len(blocks) - 1 and blocks[bidx] == curr:
             return 1
         return 0
-    for c in ['.', '#']:
-        if line[idx] in [c, '?']:
-            if c == '.':
+    for c in [".", "#"]:
+        if line[idx] in [c, "?"]:
+            if c == ".":
                 if curr == 0:
-                    ans += solve_row(line, blocks, idx + 1, bidx, 0, tuple(checks.items()))
+                    ans += solve_row(
+                        line, blocks, idx + 1, bidx, 0, tuple(checks.items())
+                    )
                 elif (curr > 0) and bidx < len(blocks) and blocks[bidx] == curr:
-                    ans += solve_row(line, blocks, idx + 1, bidx + 1, 0, tuple(checks.items()))
-            elif c == '#':
-                ans += solve_row(line, blocks, idx + 1, bidx, curr + 1, tuple(checks.items()))
+                    ans += solve_row(
+                        line, blocks, idx + 1, bidx + 1, 0, tuple(checks.items())
+                    )
+            elif c == "#":
+                ans += solve_row(
+                    line, blocks, idx + 1, bidx, curr + 1, tuple(checks.items())
+                )
     checks[key] = ans
     return ans
 
@@ -1068,24 +1076,33 @@ def solve(input_: str, extend: int = 1) -> int:
         for _ in range(extend):
             _blocks.extend(blocks)
             lines.append(line)
-        _line = '?'.join(lines)
+        _line = "?".join(lines)
         updated.append((_line, _blocks))
-    return sum(starmap(solve_row, ((line, tuple(blocks), 0, 0, 0, None) for line, blocks in updated)))
+    return sum(
+        starmap(
+            solve_row,
+            ((line, tuple(blocks), 0, 0, 0, None) for line, blocks in updated),
+        )
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     expected = [(21, [])]
     for i, e in enumerate(expected):
         e_total, e_params = e
-        assert (total := solve(TEST_INPUT, *e_params)) == e_total, f'Test {1} for part 1 failed! {total=} {e_total=}'
-        print(f'Part 1: [test {i}] {total}')
+        assert (
+            total := solve(TEST_INPUT, *e_params)
+        ) == e_total, f"Test {1} for part 1 failed! {total=} {e_total=}"
+        print(f"Part 1: [test {i}] {total}")
     total = solve(INPUT)
-    print(f'Part 1: {total}')
+    print(f"Part 1: {total}")
 
     expected = [(525152, [5])]
     for i, e in enumerate(expected):
         e_total, e_params = e
-        assert (total := solve(TEST_INPUT, *e_params)) == e_total, f'Test {1} for part 2 failed! {total=} {e_total=}'
-        print(f'Part 2: [test {i}] {total}')
+        assert (
+            total := solve(TEST_INPUT, *e_params)
+        ) == e_total, f"Test {1} for part 2 failed! {total=} {e_total=}"
+        print(f"Part 2: [test {i}] {total}")
     total = solve(INPUT, 5)
-    print(f'Part 2: {total}')
+    print(f"Part 2: {total}")

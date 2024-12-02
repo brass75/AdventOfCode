@@ -1,4 +1,3 @@
-
 def quadratic_sequence(seq: list[int], x: int) -> int:
     diff1 = seq[1] - seq[0]
     diff2 = seq[2] - seq[1] - diff1
@@ -7,7 +6,7 @@ def quadratic_sequence(seq: list[int], x: int) -> int:
     b = diff1 - (3 * a)
     c = seq[0] - a - b
 
-    return (a * (x ** 2)) + (b * x) + c
+    return (a * (x**2)) + (b * x) + c
 
 
 def calculate_polygon_area(coordinates: list[tuple[int, int]]) -> int:
@@ -21,4 +20,6 @@ def calculate_polygon_area(coordinates: list[tuple[int, int]]) -> int:
     :return: The area of the polygon excluding the perimeter.
     """
     x, y = zip(*coordinates)
-    return abs(sum((x[i-1] + x[i]) * (y[i-1] - y[i]) for i in range(len(coordinates)))//2)
+    return abs(
+        sum((x[i - 1] + x[i]) * (y[i - 1] - y[i]) for i in range(len(coordinates))) // 2
+    )

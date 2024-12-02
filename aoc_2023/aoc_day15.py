@@ -2,7 +2,7 @@ import re
 import time
 from collections import defaultdict
 
-INPUT = '''fzl-,tcjp=8,vkjr=9,xs-,jktcpk=3,gzp-,kfsxsd-,zxkv=7,fxz-,pj=7,mhbdch=7,xlss-,smk-,ppz-,kqggd-,dqh=7,gmv=6,
+INPUT = """fzl-,tcjp=8,vkjr=9,xs-,jktcpk=3,gzp-,kfsxsd-,zxkv=7,fxz-,pj=7,mhbdch=7,xlss-,smk-,ppz-,kqggd-,dqh=7,gmv=6,
 tjjfm=2,gbv=5,gn-,ld=7,jdr-,phq=3,rd-,qz=3,sh-,gzsb=2,glrt=7,vjkrjg-,gjqmpc=7,qnx=7,mf=1,tnrm-,lppg-,gnvx=1,rv-,vnt-,
 bst-,gkb-,tl=1,bggff-,lm=8,mqq=7,hr-,gkb-,fspkn=2,tjjfm-,shshb=3,qfczq-,zk-,zcsc-,lnrjh=2,fz-,bkb-,rg-,bcfzn=6,
 xsbb=5,sm=3,rqs-,rvlv=9,pvh=9,rl-,zrb=9,lftk=1,cdn-,zp=8,hc-,mf-,hp-,zk-,dbj=5,tm=9,zx-,gmp=4,gcq-,mxq-,lvh-,lkhb-,
@@ -202,14 +202,16 @@ lnt-,sxvv=1,rmh-,vjkrjg=6,lppg=1,zp-,skk-,hdr-,gggk=1,xprp-,ptfs=2,lmt-,qnzlf-,d
 qtz-,mjx-,rlx=4,vf-,vc-,bkb=3,xjl=9,rmh-,xtpn-,phd-,xsdlmd=7,dsnd-,jdf=5,hkr-,kv=5,fs=5,ptfs-,vsjs-,lvh-,xprp=5,kkz-,
 ct-,vlp-,hbq-,xtpn=6,jr=9,rcx=6,pcz=4,mf=9,rq=4,xsbb-,rcx=6,jnq=4,lv-,lfz=9,lnrjh=6,kk=4,tg-,sgq-,llb-,ndq-,xsdlmd=1,
 bkb=7,vt=2,kbl=4,fcv-,kt-,dkvqm=6,nm-,lsd=4,pnm-,mn-,mjx=9,drqq=8,ck=3,cdf-,ntxqq-,qqvmc-,cnd-,dh=2,dvgz-,zx=3,xb-,
-tjjfm=4,xdblmh=3,vt-,kjkbm=6,vjmdx=5,tgm-,fcv-,zj-,skj-'''
+tjjfm=4,xdblmh=3,vt-,kjkbm=6,vjmdx=5,tgm-,fcv-,zj-,skj-"""
 
-TEST_INPUT = '''rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7'''
+TEST_INPUT = """rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7"""
 
 
 class Lens:
     def __init__(self, definition: str):
-        label, operation, value = re.match(r'([A-Za-z]+)([-=])(\d*)', definition).groups()
+        label, operation, value = re.match(
+            r"([A-Za-z]+)([-=])(\d*)", definition
+        ).groups()
         self._label = label
         self._operation = operation
         self._value = int(value) if value else None
@@ -253,11 +255,11 @@ class HashMap:
     def update(self, lens: Lens):
         lhash = hash(lens)
         match lens.operation:
-            case '-':
+            case "-":
                 for i, present in enumerate(self._dict[lhash]):
                     if lens == present:
                         self._dict[lhash].pop(i)
-            case '=':
+            case "=":
                 for present in self._dict[lhash]:
                     if lens == present:
                         present.focal_length = lens.focal_length
@@ -272,7 +274,7 @@ class HashMap:
 
 
 def solve(input_: str, part_2: bool = False) -> int:
-    sequence = input_.replace('\n', '').split(',')
+    sequence = input_.replace("\n", "").split(",")
     if not part_2:
         return sum(map(Lens.find_hash, sequence))
     hashmap = HashMap()
@@ -281,25 +283,32 @@ def solve(input_: str, part_2: bool = False) -> int:
     return sum(map(hashmap.value, range(256)))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     expected_1 = [(1320, [])]
     for idx, e in enumerate(expected_1):
         e_total, e_params = e
         start = time.time()
-        assert (total := solve(TEST_INPUT, *e_params)) == e_total, f'Test {1} for part 1 failed! {total=} {e_total=}'
-        print(f'Part 1: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
+        assert (
+            total := solve(TEST_INPUT, *e_params)
+        ) == e_total, f"Test {1} for part 1 failed! {total=} {e_total=}"
+        print(
+            f"Part 1: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]"
+        )
     start = time.time()
     total = solve(INPUT)
-    print(f'Part 1: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
+    print(f"Part 1: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]")
 
     expected_2 = [(145, [True])]
     if expected_2:
         for idx, e in enumerate(expected_2):
             e_total, e_params = e
             start = time.time()
-            assert (total := solve(TEST_INPUT,
-                                   *e_params)) == e_total, f'Test {1} for part 2 failed! {total=} {e_total=}'
-            print(f'Part 2: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
+            assert (
+                total := solve(TEST_INPUT, *e_params)
+            ) == e_total, f"Test {1} for part 2 failed! {total=} {e_total=}"
+            print(
+                f"Part 2: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]"
+            )
         start = time.time()
         total = solve(INPUT, True)
-        print(f'Part 2: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
+        print(f"Part 2: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]")
