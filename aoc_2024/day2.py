@@ -1,6 +1,7 @@
 from aoc_lib import solve_problem
 import re
 
+
 INPUT = """
 40 42 44 47 49 50 48
 65 67 70 71 72 75 75
@@ -1015,7 +1016,7 @@ TEST_INPUT = """
 
 
 def parse_input(input_: str) -> list[list[int]]:
-    return [[int(c) for c in re.findall(r"\d+", line)] for line in input_.splitlines()]
+    return [[int(c) for c in re.findall(r"\d+", line)] for line in input_.splitlines() if line]
 
 
 def check_line(
