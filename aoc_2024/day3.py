@@ -8,16 +8,10 @@ TEST_INPUT = """xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?
 
 
 def solve(input_: str, check_do: bool = False) -> int:
-    num_pairs = re.findall(r"(do|don't)\(\)|mul\((\d{1,3}),(\d{1,3})\)", input_)
-    if not check_do:
-        return sum(int(nums[1]) * int(nums[2]) for nums in num_pairs if nums[1] and nums[2])
-    do = True
-    total = 0
-    for op, num1, num2 in num_pairs:
-        if op == 'do':
-            do = True
-        elif op == "don't":
-            do = False
+    do, total = True, 0
+    for op, num1, num2 in re.findall(r"(do|don't)\(\)|mul\((\d{1,3}),(\d{1,3})\)", input_):
+        if op:
+            do = not check_do or op == 'do'
         elif do:
             total += int(num1) * int(num2)
     return total
