@@ -2,7 +2,7 @@ from aoc_lib import solve_problem
 import re
 
 
-INPUT = open('data/day2.txt').read()
+INPUT = open("data/day2.txt").read()
 
 
 TEST_INPUT = """
@@ -16,7 +16,11 @@ TEST_INPUT = """
 
 
 def parse_input(input_: str) -> list[list[int]]:
-    return [[int(c) for c in re.findall(r"\d+", line)] for line in input_.splitlines() if line]
+    return [
+        [int(c) for c in re.findall(r"\d+", line)]
+        for line in input_.splitlines()
+        if line
+    ]
 
 
 def check_line(

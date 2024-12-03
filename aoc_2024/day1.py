@@ -2,7 +2,7 @@ from collections import Counter
 from aoc_lib import solve_problem
 import re
 
-INPUT = open('data/day1.txt').read()
+INPUT = open("data/day1.txt").read()
 
 TEST_INPUT = """3   4
 4   3
