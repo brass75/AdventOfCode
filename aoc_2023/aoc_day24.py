@@ -311,9 +311,9 @@ TEST_INPUT = """19, 13, 30 @ -2,  1, -2
 class Hail:
     def __init__(self, definition: str, min_: int, max_: int):
         self.definition = definition
-        position, velocity = definition.split("@")
-        x, y, z = map(float, position.split(","))
-        vx, vy, vz = map(float, velocity.split(","))
+        position, velocity = definition.split('@')
+        x, y, z = map(float, position.split(','))
+        vx, vy, vz = map(float, velocity.split(','))
         self.x1 = x
         self.y1 = y
         self.z1 = z
@@ -378,23 +378,16 @@ class Hail:
         if not all([*self.line_segment, *other.line_segment]):
             return False
         if intersection := line_intersection(*self.line_segment, *other.line_segment):
-            if (
-                self.min <= intersection[0] <= self.max
-                and self.min <= intersection[1] <= self.max
-            ):
+            if self.min <= intersection[0] <= self.max and self.min <= intersection[1] <= self.max:
                 ix, iy = intersection
                 intercepts = all(
-                    check_direction(f, s, v)
-                    for f, s, v in [(self.x1, ix, self.vx), (self.y1, iy, self.vy)]
-                ) and all(
-                    check_direction(f, s, v)
-                    for f, s, v in [(other.x1, ix, other.vx), (other.y1, iy, other.vy)]
-                )
+                    check_direction(f, s, v) for f, s, v in [(self.x1, ix, self.vx), (self.y1, iy, self.vy)]
+                ) and all(check_direction(f, s, v) for f, s, v in [(other.x1, ix, other.vx), (other.y1, iy, other.vy)])
                 return intercepts
         return False
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(definition={repr(self.definition)})"
+        return f'{self.__class__.__name__}(definition={repr(self.definition)})'
 
     def __str__(self):
         return self.definition
@@ -429,14 +422,10 @@ def solve(input_: str, min_: int, max_: int) -> int:
     storm = []
     for line in input_.splitlines():
         storm.append(Hail(line, min_, max_))
-    return sum(
-        storm[i].intercepts(storm[j])
-        for i in range(len(storm))
-        for j in range(i + 1, len(storm))
-    )
+    return sum(storm[i].intercepts(storm[j]) for i in range(len(storm)) for j in range(i + 1, len(storm)))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     part1_args = [200000000000000, 400000000000000]
     expected_1 = [(2, [TEST_INPUT, 7, 27])]
     func_1 = solve

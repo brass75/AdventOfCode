@@ -1344,11 +1344,7 @@ def solve_pattern(pattern: list[str], smudge: int = 0, factor: int = 1) -> int:
         j = start
         diff_count = 0
 
-        while (
-            i > 0
-            and j < len(pattern) - 1
-            and (diff_count := diff_count + diff(pattern[i], pattern[j])) <= smudge
-        ):
+        while i > 0 and j < len(pattern) - 1 and (diff_count := diff_count + diff(pattern[i], pattern[j])) <= smudge:
             i -= 1
             j += 1
 
@@ -1360,32 +1356,28 @@ def solve_pattern(pattern: list[str], smudge: int = 0, factor: int = 1) -> int:
 def solve(input_: str, smudge: int = 0) -> int:
     return sum(
         solve_pattern(
-            ["".join(row[i] for row in pattern) for i in range(len(pattern[0]))],
+            [''.join(row[i] for row in pattern) for i in range(len(pattern[0]))],
             smudge,
             1,
         )
         or solve_pattern(pattern, smudge, 100)
-        for pattern in (group.splitlines() for group in input_.split("\n\n"))
+        for pattern in (group.splitlines() for group in input_.split('\n\n'))
     )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     expected = [(405, [])]
     for idx, e in enumerate(expected):
         e_total, e_params = e
-        assert (
-            total := solve(TEST_INPUT, *e_params)
-        ) == e_total, f"Test {1} for part 1 failed! {total=} {e_total=}"
-        print(f"Part 1: [test {idx}] {total}")
+        assert (total := solve(TEST_INPUT, *e_params)) == e_total, f'Test {1} for part 1 failed! {total=} {e_total=}'
+        print(f'Part 1: [test {idx}] {total}')
     total = solve(INPUT)
-    print(f"Part 1: {total}")
+    print(f'Part 1: {total}')
 
     expected = [(400, [1])]
     for idx, e in enumerate(expected):
         e_total, e_params = e
-        assert (
-            total := solve(TEST_INPUT, *e_params)
-        ) == e_total, f"Test {1} for part 2 failed! {total=} {e_total=}"
-        print(f"Part 2: [test {idx}] {total}")
+        assert (total := solve(TEST_INPUT, *e_params)) == e_total, f'Test {1} for part 2 failed! {total=} {e_total=}'
+        print(f'Part 2: [test {idx}] {total}')
     total = solve(INPUT, 1)
-    print(f"Part 2: {total}")
+    print(f'Part 2: {total}')

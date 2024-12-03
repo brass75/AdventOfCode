@@ -1,6 +1,7 @@
 from aoc_lib import solve_problem
 
-INPUT = """"""
+# TODO Point this to the correct day!
+INPUT = open('data/day***.txt').read()
 
 TEST_INPUT = """"""
 
@@ -9,7 +10,7 @@ def solve(input_: str) -> int:
     pass
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     part1_args = []
     expected_1 = []
     func_1 = solve

@@ -1277,7 +1277,7 @@ frs: qnr lhk lsr"""
 def solve(input_: str) -> int:
     elements = {}
     for line in input_.splitlines():
-        node, connections = line.split(":")
+        node, connections = line.split(':')
         elements[node] = connections.split()
     graph = nx.Graph(elements)
     graph.remove_edges_from(nx.minimum_edge_cut(graph))
@@ -1285,7 +1285,7 @@ def solve(input_: str) -> int:
     return len(a) * len(b)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     part1_args = []
     expected_1 = [(54, [TEST_INPUT])]
     func_1 = solve

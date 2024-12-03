@@ -1,8 +1,8 @@
-from aoc_lib import solve_problem
 import re
 
+from aoc_lib import solve_problem
 
-INPUT = open("data/day2.txt").read()
+INPUT = open('data/day2.txt').read()
 
 
 TEST_INPUT = """
@@ -16,21 +16,13 @@ TEST_INPUT = """
 
 
 def parse_input(input_: str) -> list[list[int]]:
-    return [
-        [int(c) for c in re.findall(r"\d+", line)]
-        for line in input_.splitlines()
-        if line
-    ]
+    return [[int(c) for c in re.findall(r'\d+', line)] for line in input_.splitlines() if line]
 
 
-def check_line(
-    nums: list[int], min_diff: int, max_diff: int, bad_allowed: bool
-) -> bool:
+def check_line(nums: list[int], min_diff: int, max_diff: int, bad_allowed: bool) -> bool:
     gt = nums[0] > nums[1]
     for i in range(len(nums) - 1):
-        if gt != (nums[i] > nums[i + 1]) or not (
-            min_diff <= abs(nums[i] - nums[i + 1]) <= max_diff
-        ):
+        if gt != (nums[i] > nums[i + 1]) or not (min_diff <= abs(nums[i] - nums[i + 1]) <= max_diff):
             return (
                 any(
                     check_line(
@@ -52,7 +44,7 @@ def solve(input_: str, min_diff: int, max_diff: int, bad_allowed: bool) -> int:
     return sum(check_line(line, min_diff, max_diff, bad_allowed) for line in lines)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     part1_args = [1, 3, False]
     expected_1 = [(2, [TEST_INPUT, 1, 3, False])]
     func_1 = solve

@@ -1,4 +1,4 @@
-from aoc_lib import solve_problem, calculate_polygon_area
+from aoc_lib import calculate_polygon_area, solve_problem
 
 INPUT = """R 8 (#4cd962)
 U 10 (#6d5eb3)
@@ -726,14 +726,14 @@ U 2 (#7a21e3)
 """
 
 DIR_MAP = {
-    "R": lambda x, y, length: (x + length, y),
-    "D": lambda x, y, length: (x, y + length),
-    "L": lambda x, y, length: (x - length, y),
-    "U": lambda x, y, length: (x, y - length),
-    "0": lambda x, y, length: (x + length, y),
-    "1": lambda x, y, length: (x, y + length),
-    "2": lambda x, y, length: (x - length, y),
-    "3": lambda x, y, length: (x, y - length),
+    'R': lambda x, y, length: (x + length, y),
+    'D': lambda x, y, length: (x, y + length),
+    'L': lambda x, y, length: (x - length, y),
+    'U': lambda x, y, length: (x, y - length),
+    '0': lambda x, y, length: (x + length, y),
+    '1': lambda x, y, length: (x, y + length),
+    '2': lambda x, y, length: (x - length, y),
+    '3': lambda x, y, length: (x, y - length),
 }
 
 
@@ -756,7 +756,7 @@ def solve(input_: str, use_instruction: bool = False) -> int:
     return (perimeter // 2) + int(calculate_polygon_area(mapped)) + 1
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     part1_args = []
     expected_1 = [(62, [TEST_INPUT])]
     func_1 = solve

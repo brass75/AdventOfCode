@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from heapq import heappush, heappop
+from heapq import heappop, heappush
 from typing import Any
 
 from aoc_lib.hashable_dict import HashableDict
@@ -14,11 +14,7 @@ class GridBase:
         self.height = len(lines)
         self.length = len(lines[0])
         self.grid = HashableDict(
-            {
-                (j, i): func(c) if func else c
-                for i, line in enumerate(lines)
-                for j, c in enumerate(line)
-            }
+            {(j, i): func(c) if func else c for i, line in enumerate(lines) for j, c in enumerate(line)}
         )
 
     def __hash__(self) -> int:
@@ -28,10 +24,7 @@ class GridBase:
         return self.grid[item]
 
     def __str__(self) -> str:
-        return "\n".join(
-            "".join(str(self[i, j]) for i in range(self.length))
-            for j in range(self.height)
-        )
+        return '\n'.join(''.join(str(self[i, j]) for i in range(self.length)) for j in range(self.height))
 
     def __len__(self) -> int:
         return self.height * self.length
@@ -85,9 +78,7 @@ class GridBase:
                 for i in range(1, most + 1):
                     # Increment the coordinates we're looking at
                     nx, ny = nx + dx, ny + dy
-                    if (nx, ny) not in self or (
-                        obstacle and self[(nx, ny)] == obstacle
-                    ):
+                    if (nx, ny) not in self or (obstacle and self[(nx, ny)] == obstacle):
                         continue
                     if i >= least:
                         # If we're beyond the minimum number of steps add to the heap.

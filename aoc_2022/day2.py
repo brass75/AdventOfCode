@@ -2505,26 +2505,26 @@ TEST_INPUT = """A Y
 B X
 C Z"""
 
-VICTORIES = {"R": "S", "S": "P", "P": "R"}
+VICTORIES = {'R': 'S', 'S': 'P', 'P': 'R'}
 
-MAPPING_1 = {"A": "R", "X": "R", "B": "P", "Y": "P", "C": "S", "Z": "S"}
+MAPPING_1 = {'A': 'R', 'X': 'R', 'B': 'P', 'Y': 'P', 'C': 'S', 'Z': 'S'}
 
-MAPPING_2 = {"A": "R", "B": "P", "C": "S", "X": "L", "Y": "D", "Z": "W"}
+MAPPING_2 = {'A': 'R', 'B': 'P', 'C': 'S', 'X': 'L', 'Y': 'D', 'Z': 'W'}
 
-POINTS = ["", "R", "P", "S"]
+POINTS = ['', 'R', 'P', 'S']
 
 
 def get_me(other: str, me: str) -> str:
     if me in VICTORIES:
         return me
     match me:
-        case "W":
+        case 'W':
             for v in VICTORIES.values():
                 if VICTORIES[v] == other:
                     return v
-        case "L":
+        case 'L':
             return VICTORIES[other]
-        case "D":
+        case 'D':
             return other
 
 
@@ -2543,7 +2543,7 @@ def solve(input_: str, mapping: dict) -> int:
     return sum(get_points(*line.split(), mapping) for line in input_.splitlines())
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     part1_args = [MAPPING_1]
     expected_1 = [(15, [TEST_INPUT, *part1_args])]
     func_1 = solve

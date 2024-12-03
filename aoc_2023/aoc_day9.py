@@ -225,14 +225,14 @@ def get_extrapolated(nums: list[int], start: bool = False) -> int:
 
 
 def solve(input_: str, start: bool = False) -> int:
-    return sum((get_extrapolated(line, start) for line in parse_input(input_)))
+    return sum(get_extrapolated(line, start) for line in parse_input(input_))
 
 
-if __name__ == "__main__":
-    assert (total := solve(TEST_INPUT)) == 114, f"Test for part 1 failed! {total=}"
+if __name__ == '__main__':
+    assert (total := solve(TEST_INPUT)) == 114, f'Test for part 1 failed! {total=}'
     total = solve(INPUT)
-    print(f"Part 1: {total}")
+    print(f'Part 1: {total}')
 
-    assert (total := solve(TEST_INPUT, True)) == 2, f"Test for part 1 failed! {total=}"
+    assert (total := solve(TEST_INPUT, True)) == 2, f'Test for part 1 failed! {total=}'
     total = solve(INPUT, True)
-    print(f"Part 2: {total}")
+    print(f'Part 2: {total}')

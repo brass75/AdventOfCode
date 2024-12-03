@@ -2,7 +2,7 @@ import functools
 from collections.abc import Generator
 from copy import deepcopy
 
-from aoc_lib import solve_problem, HashableDict
+from aoc_lib import HashableDict, solve_problem
 
 INPUT = """5,0,238~8,0,238
 2,4,126~5,4,126
@@ -1466,11 +1466,11 @@ g_bricks = None
 def parse_input(input_: str) -> HashableDict:
     bricks = HashableDict()
     for i, line in enumerate(input_.splitlines()):
-        start, end = line.split("~")
-        start_x, start_y, start_z = map(int, (n for n in start.split(",")))
-        end_x, end_y, end_z = map(int, (n for n in end.split(",")))
+        start, end = line.split('~')
+        start_x, start_y, start_z = map(int, (n for n in start.split(',')))
+        end_x, end_y, end_z = map(int, (n for n in end.split(',')))
 
-        bricks[chr(ord("@") + i + 1)] = tuple(
+        bricks[chr(ord('@') + i + 1)] = tuple(
             (x, y, z)
             for x in range(start_x, end_x + 1)
             for y in range(start_y, end_y + 1)
@@ -1487,11 +1487,7 @@ def get_support(
     ignore_key: str = None,
 ) -> Generator:
     """Returns the set of blocks supporting (over = False) or supported by (over = True) the block at brick_key."""
-    test_z = (
-        min(c[-1] for c in block_coords) - 1
-        if over
-        else max(c[-1] for c in block_coords) + 1
-    )
+    test_z = min(c[-1] for c in block_coords) - 1 if over else max(c[-1] for c in block_coords) + 1
     yield from {
         test_brick_key
         for x, y, _ in block_coords
@@ -1517,9 +1513,7 @@ def try_fall_brick(brick_key: str, bricks: dict) -> bool:
         return False
     return not any(
         True
-        for block_x, block_y, block_z in (
-            coords for coords in bricks[brick_key] if coords[-1] <= lowest_z
-        )
+        for block_x, block_y, block_z in (coords for coords in bricks[brick_key] if coords[-1] <= lowest_z)
         if block_z - 1 in get_at_xy(brick_key, block_x, block_y, bricks)
     )
 
@@ -1529,9 +1523,7 @@ def fall(bricks: HashableDict):
     """Recursively drop the bricks until they're all at the lowest possible point."""
     have_fallen = False
     for brick_key, block_coords in (
-        (brick_key, block_coords)
-        for brick_key, block_coords in bricks.items()
-        if try_fall_brick(brick_key, bricks)
+        (brick_key, block_coords) for brick_key, block_coords in bricks.items() if try_fall_brick(brick_key, bricks)
     ):
         bricks[brick_key] = tuple(tuple((x, y, z - 1) for x, y, z in block_coords))
         have_fallen = True
@@ -1546,9 +1538,7 @@ def chain_size(bricks: HashableDict, brick_key: str, counter: int) -> int:
     for support_brick_key in (
         support_brick_key
         for support_brick_key in get_support(brick_key, brick, bricks)
-        if not any(
-            get_support(support_brick_key, bricks[support_brick_key], bricks, True)
-        )
+        if not any(get_support(support_brick_key, bricks[support_brick_key], bricks, True))
     ):
         counter += chain_size(bricks, support_brick_key, 1)
     return counter
@@ -1586,14 +1576,10 @@ def solve(input_: str, remove: bool = False) -> int:
     else:
         bricks = parse_input(input_)
         fall(bricks)
-    return (
-        removal_check(bricks)
-        if not remove
-        else sum(chain_size(deepcopy(bricks), key, 0) for key in bricks)
-    )
+    return removal_check(bricks) if not remove else sum(chain_size(deepcopy(bricks), key, 0) for key in bricks)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     part1_args = []
     expected_1 = [(5, [TEST_INPUT])]
     func_1 = solve

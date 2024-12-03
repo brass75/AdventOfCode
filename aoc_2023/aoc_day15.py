@@ -209,9 +209,7 @@ TEST_INPUT = """rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7"""
 
 class Lens:
     def __init__(self, definition: str):
-        label, operation, value = re.match(
-            r"([A-Za-z]+)([-=])(\d*)", definition
-        ).groups()
+        label, operation, value = re.match(r'([A-Za-z]+)([-=])(\d*)', definition).groups()
         self._label = label
         self._operation = operation
         self._value = int(value) if value else None
@@ -255,11 +253,11 @@ class HashMap:
     def update(self, lens: Lens):
         lhash = hash(lens)
         match lens.operation:
-            case "-":
+            case '-':
                 for i, present in enumerate(self._dict[lhash]):
                     if lens == present:
                         self._dict[lhash].pop(i)
-            case "=":
+            case '=':
                 for present in self._dict[lhash]:
                     if lens == present:
                         present.focal_length = lens.focal_length
@@ -274,7 +272,7 @@ class HashMap:
 
 
 def solve(input_: str, part_2: bool = False) -> int:
-    sequence = input_.replace("\n", "").split(",")
+    sequence = input_.replace('\n', '').split(',')
     if not part_2:
         return sum(map(Lens.find_hash, sequence))
     hashmap = HashMap()
@@ -283,20 +281,16 @@ def solve(input_: str, part_2: bool = False) -> int:
     return sum(map(hashmap.value, range(256)))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     expected_1 = [(1320, [])]
     for idx, e in enumerate(expected_1):
         e_total, e_params = e
         start = time.time()
-        assert (
-            total := solve(TEST_INPUT, *e_params)
-        ) == e_total, f"Test {1} for part 1 failed! {total=} {e_total=}"
-        print(
-            f"Part 1: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]"
-        )
+        assert (total := solve(TEST_INPUT, *e_params)) == e_total, f'Test {1} for part 1 failed! {total=} {e_total=}'
+        print(f'Part 1: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
     start = time.time()
     total = solve(INPUT)
-    print(f"Part 1: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]")
+    print(f'Part 1: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
 
     expected_2 = [(145, [True])]
     if expected_2:
@@ -305,10 +299,8 @@ if __name__ == "__main__":
             start = time.time()
             assert (
                 total := solve(TEST_INPUT, *e_params)
-            ) == e_total, f"Test {1} for part 2 failed! {total=} {e_total=}"
-            print(
-                f"Part 2: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]"
-            )
+            ) == e_total, f'Test {1} for part 2 failed! {total=} {e_total=}'
+            print(f'Part 2: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
         start = time.time()
         total = solve(INPUT, True)
-        print(f"Part 2: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]")
+        print(f'Part 2: {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')

@@ -9,7 +9,7 @@ def solve(input_: str) -> int:
     pass
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     part1_args = []
     expected_1 = []
     func_1 = solve

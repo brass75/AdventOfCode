@@ -12,10 +12,10 @@ Distance:  9  40  200"""
 def parse_input(input: str, remove_spaces: bool = False) -> list[tuple]:
     times, distances = input.splitlines()
     if remove_spaces:
-        times = re.sub("\s+", "", times)
-        distances = re.sub("\s+", "", distances)
-    times = list(map(int, re.findall(r"\d+", times)))
-    distances = list(map(int, re.findall(r"\d+", distances)))
+        times = re.sub(r'\s+', '', times)
+        distances = re.sub(r'\s+', '', distances)
+    times = list(map(int, re.findall(r'\d+', times)))
+    distances = list(map(int, re.findall(r'\d+', distances)))
 
     return [(time, distance) for time, distance in zip(times, distances)]
 
@@ -39,18 +39,16 @@ def part_one(_input: str = input):
     def multiply(x, y):
         return x * y
 
-    print(
-        f"part 1: {reduce(multiply, (get_num_options(time, distance) for time, distance in parsed_input))}"
-    )
+    print(f'part 1: {reduce(multiply, (get_num_options(time, distance) for time, distance in parsed_input))}')
 
 
 def part_two(_input: str = input):
     parsed_input = parse_input(_input, remove_spaces=True)
     time, distance = parsed_input[0]
-    print(f"Part 2: {get_num_options(time, distance)}")
+    print(f'Part 2: {get_num_options(time, distance)}')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     part_one(test_input)
     part_two(test_input)
 

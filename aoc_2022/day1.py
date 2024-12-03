@@ -1,5 +1,6 @@
-from aoc_lib import solve_problem
 from heapq import nlargest
+
+from aoc_lib import solve_problem
 
 INPUT = """9524
 12618
@@ -2273,11 +2274,11 @@ TEST_INPUT = """1000
 
 
 def solve(input_: str, count: int) -> int:
-    calories = [(map(int, group.splitlines())) for group in input_.split("\n\n")]
+    calories = [(map(int, group.splitlines())) for group in input_.split('\n\n')]
     return sum(nlargest(count, map(sum, calories)))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     part1_args = [1]
     expected_1 = [(24000, [TEST_INPUT, *part1_args])]
     func_1 = solve
