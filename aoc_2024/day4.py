@@ -41,12 +41,10 @@ def solve2(input_: str) -> int:
             continue
         if (
             (grid.get(get_adjacent('NE', point)) == 'M' and grid.get(get_adjacent('SW', point)) == 'S')
-            or grid.get(get_adjacent('NE', point)) == 'S'
-            and grid.get(get_adjacent('SW', point)) == 'M'
+            or (grid.get(get_adjacent('NE', point)) == 'S' and grid.get(get_adjacent('SW', point)) == 'M')
         ) and (
             (grid.get(get_adjacent('NW', point)) == 'M' and grid.get(get_adjacent('SE', point)) == 'S')
-            or grid.get(get_adjacent('NW', point)) == 'S'
-            and grid.get(get_adjacent('SE', point)) == 'M'
+            or (grid.get(get_adjacent('NW', point)) == 'S' and grid.get(get_adjacent('SE', point)) == 'M')
         ):
             found += 1
     return found
