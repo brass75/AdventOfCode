@@ -1,4 +1,4 @@
-from aoc_lib import GridBase, solve_problem
+from aoc_lib import DIRECTIONS, GridBase, get_adjacent, solve_problem
 
 # TODO Point this to the correct day!
 INPUT = open('data/day4.txt').read()
@@ -15,29 +15,6 @@ SAXAMASAAA
 MAMMMXMMMM
 MXMXAXMASX
 """
-
-DIRECTIONS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
-
-
-def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:
-    col, row = point
-    match direction:
-        case 'N':
-            return col, row - 1
-        case 'NE':
-            return col + 1, row - 1
-        case 'E':
-            return col + 1, row
-        case 'SE':
-            return col + 1, row + 1
-        case 'S':
-            return col, row + 1
-        case 'SW':
-            return col - 1, row + 1
-        case 'W':
-            return col - 1, row
-        case 'NW':
-            return col - 1, row - 1
 
 
 def solve(input_: str) -> int:

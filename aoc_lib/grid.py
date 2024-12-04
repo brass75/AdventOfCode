@@ -4,6 +4,8 @@ from typing import Any
 
 from aoc_lib.hashable_dict import HashableDict
 
+DIRECTIONS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+
 
 class GridBase:
     """Base class for a grid/matrix using a dictionary for storage"""
@@ -91,3 +93,24 @@ class GridBase:
             print(
                 f'{j}' + ' ' * (offset - len(str(j))) + ''.join(f'{self[(i, j)]:{offset}}' for i in range(self.length))
             )
+
+
+def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:
+    col, row = point
+    match direction:
+        case 'N':
+            return col, row - 1
+        case 'NE':
+            return col + 1, row - 1
+        case 'E':
+            return col + 1, row
+        case 'SE':
+            return col + 1, row + 1
+        case 'S':
+            return col, row + 1
+        case 'SW':
+            return col - 1, row + 1
+        case 'W':
+            return col - 1, row
+        case 'NW':
+            return col - 1, row - 1
