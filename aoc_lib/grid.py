@@ -83,3 +83,11 @@ class GridBase:
                     if i >= least:
                         # If we're beyond the minimum number of steps add to the heap.
                         heappush(q, (loop + i, nx, ny, dx, dy))
+
+    def print(self):
+        offset = max([1, len(str(self.height)) + 1, len(str(self.length)) + 1])
+        print(' ' + ''.join(f'{i:{offset}}' for i in range(self.length)))
+        for j in range(self.height):
+            print(
+                f'{j}' + ' ' * (offset - len(str(j))) + ''.join(f'{self[(i, j)]:{offset}}' for i in range(self.length))
+            )
