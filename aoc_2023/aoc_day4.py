@@ -16,7 +16,7 @@ def parse_input() -> list:
     lines = []
     for line in input.splitlines():
         match = re.search(r'([\d\s]+)\|([\d\s]+)', line)
-        winning, mine = [re.split(r'\s+', s.strip()) for s in match.groups()]
+        winning, mine = (re.split(r'\s+', s.strip()) for s in match.groups())
         lines.append({'winning': winning, 'mine': mine, 'count': 1})
     return lines
 
