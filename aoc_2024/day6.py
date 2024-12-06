@@ -24,7 +24,7 @@ def causes_loop(data: tuple[WalkingGrid, tuple[int, int]]) -> bool:
     return False
 
 def solve(input_: str, with_obstructions: bool = False) -> int:
-    grid = WalkingGrid(input_)
+    grid = WalkingGrid(input_, '^', obstacle='#')
     if not with_obstructions:
         return len(grid.path)
     pool = Pool(10)

@@ -1,10 +1,10 @@
-from collections.abc import Callable
+from collections.abc import Callable, Generator
 from heapq import heappop, heappush
 from typing import Any
 
 from aoc_lib.hashable_dict import HashableDict
 
-DIRECTIONS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+DIRECTIONS = ('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW')
 
 
 TURNS = {
@@ -69,6 +69,16 @@ class GridBase:
         most: int = 1,
         least: int = 1,
     ) -> int:
+        """
+        Returns the shortest path from start to end
+
+        :param start: start coordinate
+        :param end: end coordinate
+        :param obstacle: obstacle definition
+        :param max_length: maximum length of shortest path
+        :param most: most allowed stops.
+        :param least: least allowed stops.
+        """
         q = [(0, *start, 0, 0)]
         seen = set()
         while q:
@@ -94,6 +104,7 @@ class GridBase:
                         heappush(q, (loop + i, nx, ny, dx, dy))
 
     def print(self):
+        """ Print the grid with axes markers """
         offset = max([1, len(str(self.height)) + 1, len(str(self.length)) + 1])
         print(' ' + ''.join(f'{i:{offset}}' for i in range(self.length)))
         for j in range(self.height):
@@ -103,6 +114,13 @@ class GridBase:
 
 
 def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:
+    """
+    Compute the next point in a grid in the selected direction
+
+    :param direction: the direction to compute the next point
+    :param point: the starting point
+    :return: the next point
+    """
     col, row = point
     match direction:
         case 'N':
@@ -122,19 +140,51 @@ def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:
         case 'NW':
             return col - 1, row - 1
 
+def get_all_adjacent(point: tuple[int, int], directions = DIRECTIONS) -> Generator[tuple[int, int]]:
+    """
+    Gets all points adjacent to the specified point
+
+    :param point: the starting point
+    :param directions: the directions to compute the adjacent
+    """
+    for direction in directions:
+        yield get_adjacent(direction, point)
+
 class InLoop(Exception):
     pass
 
 
 class WalkingGrid(GridBase):
-    def __init__(self, input_: str):
+    """ A grid for path tracing. """
+
+    def __init__(self, input_: str, start: str = None, start_pos: tuple[int, int] = None, obstacle: str = None):
+        """
+        Initialize a WalkingGrid instance.
+
+        :param input_: the input file
+        :param start: Optional character to indicate starting position
+        :param start_pos: Optional starting position
+        :param obstacle: Optional obstacle
+        """
         super().__init__(input_)
-        for point, space in self.items:
-            if space == '^':
-                self.start = point
-                break
+        self.obstacle = obstacle
+        if start_pos:
+            self.start = start_pos
+        elif start:
+            for point, space in self.items:
+                if space == start:
+                    self.start = point
+                    break
+        else:
+            raise ValueError('start_pos or start must be specified')
 
     def walk(self, obstacle: tuple[int, int] = None) -> set:
+        """
+        Walks the patch as defined in the grid
+
+        :param obstacle: Optional location to add temporary obstacle (Does not change the grid just treats an individual location as if there is an obstacle)
+        :return: The set of locations in the followed path
+        """
         curr = self.start
         direction = 'N'
         seen, path = set(), set()
@@ -142,7 +192,7 @@ class WalkingGrid(GridBase):
             seen.add((curr, direction))
             if (next_point := get_adjacent(direction, curr)) not in self:
                 return path
-            if self[next_point] == '#' or next_point == obstacle:
+            if self[next_point] == self.obstacle or next_point == obstacle:
                 direction = TURNS[direction]
             else:
                 curr = next_point
@@ -152,4 +202,5 @@ class WalkingGrid(GridBase):
 
     @property
     def path(self) -> set:
+        """ The set of locations in the followed path """
         return self.walk()
