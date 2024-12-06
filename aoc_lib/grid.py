@@ -7,6 +7,13 @@ from aoc_lib.hashable_dict import HashableDict
 DIRECTIONS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
 
 
+TURNS = {
+    'N': 'E',
+    'E': 'S',
+    'S': 'W',
+    'W': 'N',
+}
+
 class GridBase:
     """Base class for a grid/matrix using a dictionary for storage"""
 
@@ -114,3 +121,35 @@ def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:
             return col - 1, row
         case 'NW':
             return col - 1, row - 1
+
+class InLoop(Exception):
+    pass
+
+
+class WalkingGrid(GridBase):
+    def __init__(self, input_: str):
+        super().__init__(input_)
+        for point, space in self.items:
+            if space == '^':
+                self.start = point
+                break
+
+    def walk(self, obstacle: tuple[int, int] = None) -> set:
+        curr = self.start
+        direction = 'N'
+        seen, path = set(), set()
+        while curr in self:
+            seen.add((curr, direction))
+            if (next_point := get_adjacent(direction, curr)) not in self:
+                return path
+            if self[next_point] == '#' or next_point == obstacle:
+                direction = TURNS[direction]
+            else:
+                curr = next_point
+            path.add(curr)
+            if (curr, direction) in seen:
+                raise InLoop
+
+    @property
+    def path(self) -> set:
+        return self.walk()
