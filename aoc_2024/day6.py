@@ -1,5 +1,6 @@
-from aoc_lib import InLoop, WalkingGrid, solve_problem
 from multiprocessing import Pool
+
+from aoc_lib import InLoop, WalkingGrid, solve_problem
 
 INPUT = open('data/day6.txt').read()
 
@@ -22,6 +23,7 @@ def causes_loop(data: tuple[WalkingGrid, tuple[int, int]]) -> bool:
     except InLoop:
         return True
     return False
+
 
 def solve(input_: str, with_obstructions: bool = False) -> int:
     grid = WalkingGrid(input_, '^', obstacle='#')

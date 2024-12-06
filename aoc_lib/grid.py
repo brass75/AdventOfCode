@@ -14,6 +14,7 @@ TURNS = {
     'W': 'N',
 }
 
+
 class GridBase:
     """Base class for a grid/matrix using a dictionary for storage"""
 
@@ -104,7 +105,7 @@ class GridBase:
                         heappush(q, (loop + i, nx, ny, dx, dy))
 
     def print(self):
-        """ Print the grid with axes markers """
+        """Print the grid with axes markers"""
         offset = max([1, len(str(self.height)) + 1, len(str(self.length)) + 1])
         print(' ' + ''.join(f'{i:{offset}}' for i in range(self.length)))
         for j in range(self.height):
@@ -140,7 +141,8 @@ def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:
         case 'NW':
             return col - 1, row - 1
 
-def get_all_adjacent(point: tuple[int, int], directions = DIRECTIONS) -> Generator[tuple[int, int]]:
+
+def get_all_adjacent(point: tuple[int, int], directions=DIRECTIONS) -> Generator[tuple[int, int]]:
     """
     Gets all points adjacent to the specified point
 
@@ -150,12 +152,13 @@ def get_all_adjacent(point: tuple[int, int], directions = DIRECTIONS) -> Generat
     for direction in directions:
         yield get_adjacent(direction, point)
 
+
 class InLoop(Exception):
     pass
 
 
 class WalkingGrid(GridBase):
-    """ A grid for path tracing. """
+    """A grid for path tracing."""
 
     def __init__(self, input_: str, start: str = None, start_pos: tuple[int, int] = None, obstacle: str = None):
         """
@@ -182,7 +185,8 @@ class WalkingGrid(GridBase):
         """
         Walks the patch as defined in the grid
 
-        :param obstacle: Optional location to add temporary obstacle (Does not change the grid just treats an individual location as if there is an obstacle)
+        :param obstacle: Optional location to add temporary obstacle (Does not change the grid just treats
+                         an individual location as if there is an obstacle)
         :return: The set of locations in the followed path
         """
         curr = self.start
@@ -202,5 +206,5 @@ class WalkingGrid(GridBase):
 
     @property
     def path(self) -> set:
-        """ The set of locations in the followed path """
+        """The set of locations in the followed path"""
         return self.walk()
