@@ -23,7 +23,7 @@ def parse_input(input_: str) -> list[tuple]:
     return lines
 
 
-def do_the_math(*args) -> tuple[int, int]:
+def do_the_math(*args) -> int:
     """
     Recursive function to handle the math
 
@@ -46,7 +46,10 @@ def do_the_math(*args) -> tuple[int, int]:
     ]
     if allow_concat:
         funcs.append(lambda x, y: int(str(x) + str(y)))
-    return max(do_the_math((line, func(current, next), idx, allow_concat)) for func in funcs)
+    for func in funcs:
+        if do_the_math((line, func(current, next), idx, allow_concat)) == answer:
+            return answer
+    return 0
 
 
 def solve(input_: str, allow_concat: bool = False) -> int:
