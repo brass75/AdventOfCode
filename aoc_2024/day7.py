@@ -1,3 +1,4 @@
+import os
 from multiprocessing import Pool
 
 from aoc_lib import solve_problem
@@ -16,11 +17,9 @@ TEST_INPUT = """190: 10 19
 
 
 def parse_input(input_: str) -> list[tuple]:
-    lines = []
     for line in input_.splitlines():
         value, operands = line.split(':')
-        lines.append((int(value), tuple(map(int, operands.split()))))
-    return lines
+        yield int(value), tuple(map(int, operands.split()))
 
 
 def do_the_math(*args) -> int:
@@ -28,33 +27,34 @@ def do_the_math(*args) -> int:
     Recursive function to handle the math
 
     :param args: I have to use args here because I want to use map in the initial call.
-    :arg line: The tuple representing the line (answer, (operands))
-    :arg current: The current value based on what we've done so far
-    :arg index: The next index to read from the operands tuple
-    :arg allow_concat: Allow concatenation via the "||" operator
+                :arg line: The tuple representing the line (answer, (operands))
+                :arg current: The current value based on what we've done so far
+                :arg idx: The next index to read from the operands tuple
+                :arg operators: Operators to use
     :return: The answer from the line if any of the combinations find it otherwise 0
     """
-    line, current, idx, allow_concat = args[0]
-    answer, operands = line
+    (answer, operands), current, idx, operators = args[0]
     if idx >= len(operands):
         return answer if current == answer else 0
-    next = operands[idx]
-    idx += 1
-    funcs = [
-        lambda x, y: x + y,
-        lambda x, y: x * y,
-    ]
-    if allow_concat:
-        funcs.append(lambda x, y: int(str(x) + str(y)))
-    for func in funcs:
-        if do_the_math((line, func(current, next), idx, allow_concat)) == answer:
+
+    for operator in operators:
+        if do_the_math(((answer, operands), operation(current, operands[idx], operator), idx + 1, operators)) == answer:
             return answer
     return 0
 
 
+def operation(x, y, op):
+    if op == '+':
+        return x + y
+    if op == '*':
+        return x * y
+    if op == '||':
+        return int(str(x) + str(y))
+
+
 def solve(input_: str, allow_concat: bool = False) -> int:
-    lines = parse_input(input_)
-    return sum(Pool(10).map(do_the_math, ((line, 0, 0, allow_concat) for line in lines)))
+    funcs = ['+', '*', '||'] if allow_concat else ['+', '*']
+    return sum(Pool(os.cpu_count()).map(do_the_math, ((line, 0, 0, funcs) for line in parse_input(input_))))
 
 
 if __name__ == '__main__':
