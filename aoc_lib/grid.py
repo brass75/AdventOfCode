@@ -15,17 +15,39 @@ TURNS = {
 }
 
 
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __hash__(self):
+        return hash((self.x, self.y))
+
+    def __str__(self):
+        return f'({self.x}, {self.y})'
+
+    def __repr__(self):
+        return f'Point({self.x}, {self.y})'
+
+    def as_tuple(self):
+        return self.x, self.y
+
 class GridBase:
     """Base class for a grid/matrix using a dictionary for storage"""
 
-    def __init__(self, input_: str, func: Callable = None):
+    def __init__(self, input_: str, func: Callable = None, char_width: int = 1):
         self._input = input_
         lines = input_.splitlines()
         self.height = len(lines)
-        self.length = len(lines[0])
-        self.grid = HashableDict(
-            {(j, i): func(c) if func else c for i, line in enumerate(lines) for j, c in enumerate(line)}
-        )
+        self.length = len(lines[0]) // char_width
+        self.char_width = char_width
+        temp_dict = dict()
+        for i, line in enumerate(lines):
+            for j in range(0, len(line), char_width):
+                k = (j//char_width, i)
+                v = func(line[j:j+char_width]) if func else line[j:j+char_width]
+                temp_dict.update({k: v})
+        self.grid = HashableDict(temp_dict)
 
     def __hash__(self) -> int:
         return hash(self.grid)
