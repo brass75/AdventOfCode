@@ -137,7 +137,9 @@ class GridBase:
         print(' ' + ''.join(f'{i:{offset}}' for i in range(self.length)))
         for j in range(self.height):
             print(
-                f'{j}' + ' ' * (offset - len(str(j))) + ''.join(f'{self.grid.get((i, j), self.ignore):{offset}}' for i in range(self.length))
+                f'{j}'
+                + ' ' * (offset - len(str(j)))
+                + ''.join(f'{self.grid.get((i, j), self.ignore):{offset}}' for i in range(self.length))
             )
 
 
@@ -235,5 +237,3 @@ class WalkingGrid(GridBase):
     def path(self) -> set:
         """The set of locations in the followed path"""
         return self.walk()
-
-
