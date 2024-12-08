@@ -32,20 +32,24 @@ class Point:
     def as_tuple(self):
         return self.x, self.y
 
+
 class GridBase:
     """Base class for a grid/matrix using a dictionary for storage"""
 
-    def __init__(self, input_: str, func: Callable = None, char_width: int = 1):
+    def __init__(self, input_: str, func: Callable = None, char_width: int = 1, ignore: Any = None):
         self._input = input_
         lines = input_.splitlines()
         self.height = len(lines)
         self.length = len(lines[0]) // char_width
         self.char_width = char_width
+        self.ignore = ignore
         temp_dict = dict()
         for i, line in enumerate(lines):
             for j in range(0, len(line), char_width):
-                k = (j//char_width, i)
-                v = func(line[j:j+char_width]) if func else line[j:j+char_width]
+                k = (j // char_width, i)
+                v = func(line[j : j + char_width]) if func else line[j : j + char_width]
+                if ignore and v == ignore:
+                    continue
                 temp_dict.update({k: v})
         self.grid = HashableDict(temp_dict)
 
@@ -62,7 +66,8 @@ class GridBase:
         return self.height * self.length
 
     def __contains__(self, item: tuple[int, int]) -> bool:
-        return item in self.grid
+        x, y = item
+        return 0 <= x < self.length and 0 <= y < self.height
 
     @property
     def values(self):
@@ -132,7 +137,7 @@ class GridBase:
         print(' ' + ''.join(f'{i:{offset}}' for i in range(self.length)))
         for j in range(self.height):
             print(
-                f'{j}' + ' ' * (offset - len(str(j))) + ''.join(f'{self[(i, j)]:{offset}}' for i in range(self.length))
+                f'{j}' + ' ' * (offset - len(str(j))) + ''.join(f'{self.grid.get((i, j), self.ignore):{offset}}' for i in range(self.length))
             )
 
 
@@ -230,3 +235,5 @@ class WalkingGrid(GridBase):
     def path(self) -> set:
         """The set of locations in the followed path"""
         return self.walk()
+
+
