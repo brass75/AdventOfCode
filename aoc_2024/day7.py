@@ -34,7 +34,7 @@ def do_the_math(*args) -> int:
     :return: The answer from the line if any of the combinations find it otherwise 0
     """
     (answer, operands), current, idx, operators = args[0]
-    if idx >= len(operands):
+    if idx >= len(operands) or current > answer:
         return answer if current == answer else 0
 
     for operator in operators:
