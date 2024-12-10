@@ -1,5 +1,6 @@
-from aoc_lib import solve_problem, GridBase, get_adjacent
-from collections import defaultdict, deque
+from collections import deque
+
+from aoc_lib import GridBase, get_adjacent, solve_problem
 
 INPUT = open('data/day10.txt').read()
 
@@ -12,36 +13,37 @@ TEST_INPUT = """89010123
 01329801
 10456732"""
 
-TEST_INPUT2 = '''10..9..
+TEST_INPUT2 = """10..9..
 2...8..
 3...7..
 4567654
 ...8..3
 ...9..2
 .....01
-'''
+"""
 
-TEST_INPUT3 = '''..90..9
+TEST_INPUT3 = """..90..9
 ...1.98
 ...2..7
 6543456
 765.987
 876....
-987....'''
+987...."""
 
-TEST_INPUT4 = '''..90..9
+TEST_INPUT4 = """..90..9
 ...1.98
 ...2..7
 6543456
 765.987
 876....
-987....'''
+987...."""
 
 
-def get_trails(grid: GridBase, point: tuple[int, int], min_slope: int = 1, max_slope: int = 1, end_value: int = 9) -> tuple[dict, set]:
+def get_trails(
+    grid: GridBase, point: tuple[int, int], min_slope: int = 1, max_slope: int = 1, end_value: int = 9
+) -> list:
     queue = deque([point])
-    found = defaultdict(list)
-    ends = set()
+    found = list()
     seen = set()
     while queue:
         curr = queue.popleft()
@@ -53,22 +55,18 @@ def get_trails(grid: GridBase, point: tuple[int, int], min_slope: int = 1, max_s
             next_val = grid[next_point]
             if min_slope <= next_val - val <= max_slope:
                 if next_val == end_value:
-                    found[point].append(next_point)
-                    ends.add(next_point)
+                    found.append(next_point)
                     continue
                 queue.append(next_point)
-    return found, ends
+    return found
+
 
 def solve(input_: str, rating: bool = False) -> int:
-    grid = GridBase(input_, func=lambda x: '.' if x == '.' else int(x))
-    total = 0
-    for point in (point for point, value in grid.items if value == 0):
-        found, ends = get_trails(grid, point, rating)
-        if rating:
-            total += sum(map(len, found.values()))
-        else:
-            total += len(ends)
-    return total
+    grid = GridBase(input_, func=lambda x: x if x == '.' else int(x))
+    return sum(
+        len(found if rating else set(found))
+        for found in (get_trails(grid, point) for point, value in grid.items if value == 0)
+    )
 
 
 if __name__ == '__main__':
