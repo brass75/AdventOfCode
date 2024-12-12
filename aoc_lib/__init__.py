@@ -1,6 +1,6 @@
 from .aoc_lib import solve_problem, timed_call, tracer
 from .functions import calculate_polygon_area, quadratic_sequence
-from .grid import DIRECTIONS, GridBase, InLoop, WalkingGrid, get_adjacent, get_all_adjacent
+from .grid import DIRECTIONS, GridBase, InLoop, WalkingGrid, get_adjacent, get_all_adjacent, get_different
 from .hashable_dict import HashableDict, HashableSet
 
 __all__ = [
@@ -16,5 +16,6 @@ __all__ = [
     'WalkingGrid',
     'InLoop',
     'get_all_adjacent',
-    'tracer'
+    'tracer',
+    'get_different',
 ]

@@ -182,6 +182,10 @@ def get_all_adjacent(point: tuple[int, int], directions=DIRECTIONS) -> Generator
         yield get_adjacent(direction, point)
 
 
+def get_different(first: tuple[int, int], second: tuple[int, int]) -> tuple[int, int]:
+    return first[0] - second[0], first[1] - second[1]
+
+
 class InLoop(Exception):
     pass
 

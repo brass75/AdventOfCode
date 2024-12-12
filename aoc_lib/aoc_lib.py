@@ -1,6 +1,6 @@
 import time
-from collections.abc import Callable
 import tracemalloc
+from collections.abc import Callable
 
 
 def timed_call(func: Callable):
@@ -40,4 +40,3 @@ def tracer(func):
         return rc
 
     return wrapper
-
