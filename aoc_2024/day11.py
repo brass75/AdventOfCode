@@ -28,7 +28,7 @@ def solve(input_: str, iterations: int) -> int:
         results = defaultdict(int)
         # Iterate over the counter we have
         for stone, count in counts.items():
-            # Transform each stone to get the new stone(2)
+            # Transform each stone to get the new stone(s)
             for transformed in transform(stone):
                 # Update the new counter with current stones and the count from its origin stone
                 results[transformed] += count
