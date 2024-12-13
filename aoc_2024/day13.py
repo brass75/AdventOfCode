@@ -1,6 +1,7 @@
 import re
 from functools import partial
 from multiprocessing import Pool
+from pprint import pp
 
 import sympy
 from sympy import Integer
@@ -26,35 +27,23 @@ Button B: X+27, Y+71
 Prize: X=18641, Y=10279"""
 
 
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def as_tuple(self):
-        return self.x, self.y
-
-
 def parse_input(input_: str) -> list[dict]:
-    machines = list()
+    machines: list[dict] = list()
     for machine in input_.split('\n\n'):
         line_pattern = re.compile(r'\s?([A-Za-z]+):\sX[+=](\d+),\sY[+=](\d+)')
-        machine_dict = {}
+        machine_dict: dict[str, tuple[int, int]] = dict()
         for line in machine.splitlines():
-            match = line_pattern.search(line)
+            match: re.Match = line_pattern.search(line)
             key, x, y = match.groups()
-            machine_dict[key] = Point(int(x), int(y))
+            machine_dict[key] = (int(x), int(y))
         machines.append(machine_dict)
     return machines
 
 
-def get_machine(machine: dict, prize_factor: int) -> int:
-    px, py = machine['Prize'].as_tuple()
-    if prize_factor:
-        # Apply the conversion error
-        px += prize_factor
-        py += prize_factor
-
+def get_machine(machine: dict[str, tuple[int, int]], prize_factor: int) -> int:
+    px, py = machine['Prize']
+    ax, ay = machine['A']
+    bx, by = machine['B']
     # This problem comes down to solving the 2 equations:
     #    ax * na + bx * nb = px
     #    ay * na + by * nb = py
@@ -65,8 +54,8 @@ def get_machine(machine: dict, prize_factor: int) -> int:
     #    na and nb are the number of presses for each button.
     # Since there are 2 unknowns we can leverage sympy's solve to find them out for us.
     a, b = sympy.symbols('a, b')
-    eq1 = sympy.Eq(machine['A'].x * a + machine['B'].x * b, px)
-    eq2 = sympy.Eq(machine['A'].y * a + machine['B'].y * b, py)
+    eq1 = sympy.Eq(ax * a + bx * b, px + prize_factor)
+    eq2 = sympy.Eq(ay * a + by * b, py + prize_factor)
     solution = sympy.solve((eq1, eq2), (a, b))
 
     if not all(isinstance(obj, Integer) for obj in solution.values()):
