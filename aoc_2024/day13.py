@@ -1,7 +1,6 @@
 import re
 from functools import partial
 from multiprocessing import Pool
-from pprint import pp
 
 import sympy
 from sympy import Integer

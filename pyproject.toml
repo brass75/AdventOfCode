@@ -3,9 +3,10 @@ name = "adventofcode"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "networkx==3.2.1",
+    "sympy==1.13.3",
 ]
 
 [tool.ruff]
@@ -23,12 +24,12 @@ lint.select = [
 lint.ignore = [
 ]
 
-exclude = [
-]
-
 # Allow fix for all enabled rules (when `--fix`) is provided.
 lint.fixable = ["ALL"]
 lint.unfixable = []
+
+exclude = [
+]
 
 [tool.ruff.lint.isort]
 known-local-folder = [
