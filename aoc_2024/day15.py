@@ -1,10 +1,10 @@
 from collections import deque
 
-from aoc_lib import solve_problem, get_adjacent, GridBase, direction_deltas
+from aoc_lib import GridBase, direction_deltas, get_adjacent, solve_problem
 
 INPUT = open('data/day15.txt').read()
 
-TEST_INPUT = '''########
+TEST_INPUT = """########
 #..O.O.#
 ##@.O..#
 #...O..#
@@ -13,9 +13,9 @@ TEST_INPUT = '''########
 #......#
 ########
 
-<^^>>>vv<v>>v<<'''
+<^^>>>vv<v>>v<<"""
 
-TEST_INPUT2 = '''##########
+TEST_INPUT2 = """##########
 #..O..O.O#
 #......O.#
 #.OO..O.O#
@@ -35,10 +35,10 @@ vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v
 >^>>^v>vv>^<<^v<>><<><<v<<v><>v<^vv<<<>^^v^>^^>>><<^v>>v^v><^^>>^<>vv^
 <><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>
 ^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>
-v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^'''
+v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^"""
 
 
-TEST_INPUT3 = '''####################
+TEST_INPUT3 = """####################
 ##....[]....[]..[]##
 ##............[]..##
 ##..[][]....[]..[]##
@@ -58,7 +58,7 @@ vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v
 >^>>^v>vv>^<<^v<>><<><<v<<v><>v<^vv<<<>^^v^>^^>>><<^v>>v^v><^^>>^<>vv^
 <><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>
 ^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>
-v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^'''
+v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^"""
 
 
 DIRECTIONS = {
@@ -127,7 +127,7 @@ def move_guard_part1(grid: dict, moves: str):
                         guard = adjacent
 
 
-def move_guard_part2(position, direction, grid):
+def move_guard_part2(position: tuple[int, int], direction: str, grid: dict):
     next_position = get_adjacent(direction, position)
     match grid.get(next_position):
         case '.':
@@ -142,7 +142,8 @@ def move_guard_part2(position, direction, grid):
             raise RuntimeError(f'Something funky is happening at {next_position=}')
 
 
-def horizontal(position, direction, grid):
+def horizontal(position: tuple[int, int], direction: str, grid: dict):
+    """Move box(es) horizontally"""
     delta = direction_deltas(direction)
     dx = delta[0]
     x, y = position
@@ -163,7 +164,13 @@ def horizontal(position, direction, grid):
             return next_position, grid
 
 
-def can_push_vertical(position, dy, grid):
+def can_push_vertical(position: tuple[int, int], dy: int, grid: dict):
+    """
+    See if boxes can be moved vertically
+
+    Since we're starting at a single point but a box takes up 2 points we need to continue to check the spaces above
+    until we hit free space or a wall.
+    """
     points = list()
     x, y = position
     match adj := grid.get((x, y + dy)):
@@ -178,11 +185,10 @@ def can_push_vertical(position, dy, grid):
     return all(can_push_vertical(point, dy, grid) for point in points)
 
 
-def get_vertical_move_coordinates(dy, grid, points):
-    if points and all(grid.get((x, y + dy)) == '.' for x, y in points):
+def get_vertical_move_coordinates(dy: int, grid: dict, points: set) -> set:
+    """Figure out which points contain a box"""
+    if all(grid.get((x, y + dy)) == '.' for x, y in points):
         return points
-    if not points:
-        raise RuntimeError('No points!')
 
     next_row = set()
 
@@ -195,7 +201,8 @@ def get_vertical_move_coordinates(dy, grid, points):
     return points | get_vertical_move_coordinates(dy, grid, next_row)
 
 
-def vertical(position, direction, grid):
+def vertical(position: tuple[int, int], direction: str, grid: dict):
+    """Move the guard and box(es) vertically"""
     delta = direction_deltas(direction)
     dy = delta[1]
     if not can_push_vertical(position, dy, grid):

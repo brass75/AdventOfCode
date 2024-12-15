@@ -26,7 +26,9 @@ def parse_input(input_: str) -> list[dict]:
     return [{k: int(v) for k, v in line_pattern.search(line).groupdict().items()} for line in lines]
 
 
-def get_next_location(sx: int, sy: int, vx: int, vy:int, width: int, height: int, num_steps: int = 1) -> tuple[int, int]:
+def get_next_location(
+    sx: int, sy: int, vx: int, vy: int, width: int, height: int, num_steps: int = 1
+) -> tuple[int, int]:
     """Calculate the position after num_steps steps"""
     nx = (sx + (vx * num_steps)) % width
     ny = (sy + (vy * num_steps)) % height
@@ -81,9 +83,7 @@ def solve(input_: str, width: int, height: int, num_steps: int, tree_hunt: bool 
     # Print it out to see it's correct (and the pretty picture!)
     grid = [list('.' * width) for _ in range(height)]
     for robot in [
-        get_next_location(
-            robot['start_x'], robot['start_y'], robot['vector_x'], robot['vector_y'], width, height, rc
-        )
+        get_next_location(robot['start_x'], robot['start_y'], robot['vector_x'], robot['vector_y'], width, height, rc)
         for robot in robots
     ]:
         j, i = robot
