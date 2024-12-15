@@ -36,18 +36,21 @@ class Point:
 class GridBase:
     """Base class for a grid/matrix using a dictionary for storage"""
 
-    def __init__(self, input_: str, func: Callable = None, char_width: int = 1, ignore: Any = None):
+    def __init__(self, input_: str, func: Callable = None, char_width: int = 1, ignore: Any = None, parsed: dict = None):
         self._input = input_
         lines = input_.splitlines()
         self.height = len(lines)
         self.length = len(lines[0]) // char_width
         self.char_width = char_width
         self.ignore = ignore
+        if parsed:
+            self.grid = HashableDict(parsed)
+            return
         temp_dict = dict()
         for i, line in enumerate(lines):
             for j in range(0, len(line), char_width):
                 k = (j // char_width, i)
-                v = func(line[j : j + char_width]) if func else line[j : j + char_width]
+                v = func(line[j: j + char_width]) if func else line[j : j + char_width]
                 if ignore and v == ignore:
                     continue
                 temp_dict.update({k: v})
