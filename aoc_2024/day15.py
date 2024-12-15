@@ -1,6 +1,6 @@
 from collections import deque
 
-from aoc_lib import solve_problem, get_adjacent, GridBase
+from aoc_lib import solve_problem, get_adjacent, GridBase, direction_deltas
 
 INPUT = open('data/day15.txt').read()
 
@@ -38,6 +38,29 @@ vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v
 v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^'''
 
 
+TEST_INPUT3 = '''####################
+##....[]....[]..[]##
+##............[]..##
+##..[][]....[]..[]##
+##....[]@.....[]..##
+##[]##....[]......##
+##[]....[]....[]..##
+##..[][]..[]..[][]##
+##........[]......##
+####################
+
+<vv>^<v^>v>^vv^v>v<>v^v<v<^vv<<<^><<><>>v<vvv<>^v^>^<<<><<v<<<v^vv^v>^
+vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v
+><>vv>v^v^<>><>>>><^^>vv>v<^^^>>v^v^<^^>v^^>v^<^v>v<>>v^v^<v>v^^<^^vv<
+<<v<^>>^^^^>>>v^<>vvv^><v<<<>^^^vv^<vvv>^>v<^^^^v<>^>vvvv><>>v^<<^^^^^
+^><^><>>><>^^<<^^v>>><^<v>^<vv>>v>>>^v><>^v><<<<v>>v<v<v>vvv>^<><<>^><
+^>><>^v<><^vvv<^^<><v<<<<<><^v<<<><<<^^<v<^^^><^>>^<v^><<<^>>^v<v^v<v^
+>^>>^v>vv>^<<^v<>><<><<v<<v><>v<^vv<<<>^^v^>^^>>><<^v>>v^v><^^>>^<>vv^
+<><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>
+^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>
+v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^'''
+
+
 DIRECTIONS = {
     '^': 'N',
     '>': 'E',
@@ -46,16 +69,28 @@ DIRECTIONS = {
 }
 
 
-def parse_input(input_: str) -> tuple[dict, str, str]:
+def parse_input(input_: str, update: bool = False) -> tuple[str, str]:
     lines, moves = input_.split('\n\n')
     moves = moves.replace('\n', '')
-    grid = dict()
-    for i, line in enumerate(lines.splitlines()):
-        for j in range(len(line.strip())):
-            k = (j, i)
-            v = line[j]
-            grid.update({k: v})
-    return grid, moves, lines
+    return update_input(lines) if update else lines, moves
+
+
+def update_input(lines: str) -> str:
+    """Update part1 type input for part 2"""
+    rc = ''
+    for c in lines:
+        match c:
+            case '#':
+                rc += '##'
+            case '@':
+                rc += '@.'
+            case '.':
+                rc += '..'
+            case 'O':
+                rc += '[]'
+            case '\n':
+                rc += c
+    return rc
 
 
 def find_guard(grid: dict) -> tuple[int, int]:
@@ -64,10 +99,9 @@ def find_guard(grid: dict) -> tuple[int, int]:
             return k
 
 
-def move_guard(grid: dict, moves: str, unparsed: str):
+def move_guard_part1(grid: dict, moves: str):
     queue = deque(moves)
     guard = find_guard(grid)
-    GridBase(unparsed, parsed=grid).print()
     while queue:
         move = queue.popleft()
         count = 1
@@ -79,11 +113,8 @@ def move_guard(grid: dict, moves: str, unparsed: str):
             match grid[adjacent]:
                 case '.':
                     grid[guard] = '.'
-                    grid[adjacent] = '@'
                     guard = adjacent
                 case '#':
-                    # print(f'{move=}')
-                    # GridBase(unparsed, parsed=grid).print()
                     break
                 case 'O':
                     next_ = adjacent
@@ -95,15 +126,105 @@ def move_guard(grid: dict, moves: str, unparsed: str):
                         grid[guard] = '.'
                         guard = adjacent
 
-            # print(f'{move=}')
-            # GridBase(unparsed, parsed=grid).print()
+
+def move_guard_part2(position, direction, grid):
+    next_position = get_adjacent(direction, position)
+    match grid.get(next_position):
+        case '.':
+            grid[position] = '.'
+            grid[next_position] = '@'
+            return next_position, grid
+        case '#':
+            return position, grid
+        case '[' | ']':
+            return horizontal(position, direction, grid) if direction in 'EW' else vertical(position, direction, grid)
+        case _:
+            raise RuntimeError(f'Something funky is happening at {next_position=}')
+
+
+def horizontal(position, direction, grid):
+    delta = direction_deltas(direction)
+    dx = delta[0]
+    x, y = position
+    x += dx
+    next_position = (x, y)
+    while (next_spot := grid.get((x + dx, y))) in '[]':
+        x += dx
+    x += dx
+    match next_spot:
+        case '#':
+            return position, grid
+        case '.':
+            while x != next_position[0]:
+                grid[(x, y)] = grid[(x - dx, y)]
+                x -= dx
+            grid[next_position] = '@'
+            grid[position] = '.'
+            return next_position, grid
+
+
+def can_push_vertical(position, dy, grid):
+    points = list()
+    x, y = position
+    match adj := grid.get((x, y + dy)):
+        case '.':
+            return True
+        case '#':
+            return False
+        case '[' | ']':
+            dx = 1 if adj == '[' else -1
+            points.append((x + dx, y + dy))
+            points.append((x, y + dy))
+    return all(can_push_vertical(point, dy, grid) for point in points)
+
+
+def get_vertical_move_coordinates(dy, grid, points):
+    if points and all(grid.get((x, y + dy)) == '.' for x, y in points):
+        return points
+    if not points:
+        raise RuntimeError('No points!')
+
+    next_row = set()
+
+    for x, y in points:
+        if (adj := grid.get((x, y + dy))) == '[':
+            next_row.update([(x, y + dy), (x + 1, y + dy)])
+        elif adj == ']':
+            next_row.update([(x, y + dy), (x - 1, y + dy)])
+
+    return points | get_vertical_move_coordinates(dy, grid, next_row)
+
+
+def vertical(position, direction, grid):
+    delta = direction_deltas(direction)
+    dy = delta[1]
+    if not can_push_vertical(position, dy, grid):
+        return position, grid
+    to_move = get_vertical_move_coordinates(dy, grid, {position}) - {position}
+    to_move = sorted(to_move, key=lambda c: c[1], reverse=direction != 'N')
+    for x, y in to_move:
+        grid[(x, y + dy)] = grid[(x, y)]
+        grid[(x, y)] = '.'
+    grid[position] = '.'
+    grid[(position[0], position[1] + dy)] = '@'
+    return (position[0], position[1] + dy), grid
+
+
+def solve2(input_: str) -> int:
+    lines, moves = parse_input(input_, True)
+    orig = GridBase(lines)
+    grid = dict(orig.items)
+    pos = find_guard(grid)
+    for move in moves:
+        pos, grid = move_guard_part2(pos, DIRECTIONS[move], grid)
+    return sum(x + (y * 100) for (x, y), v in grid.items() if v == '[')
 
 
 def solve(input_: str) -> int:
-    grid, moves, unparsed_grid = parse_input(input_)
-    move_guard(grid, moves, unparsed_grid)
-    GridBase(unparsed_grid, parsed=grid).print()
-    return sum((y * 100) + x for (x ,y), c in grid.items() if c == 'O')
+    lines, moves = parse_input(input_)
+    grid = dict(GridBase(lines).items)
+    move_guard_part1(grid, moves)
+    return sum((y * 100) + x for (x, y), c in grid.items() if c == 'O')
 
 
 if __name__ == '__main__':
@@ -112,8 +233,8 @@ if __name__ == '__main__':
     func_1 = solve
 
     part2_args = []
-    expected_2 = []
-    func_2 = solve
+    expected_2 = [(9021, [TEST_INPUT2])]
+    func_2 = solve2
 
     if expected_1:
         for idx, (e_total, e_params) in enumerate(expected_1):

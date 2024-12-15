@@ -174,6 +174,26 @@ def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:
             return col - 1, row - 1
 
 
+def direction_deltas(direction: str) -> tuple[int, int]:
+    match direction:
+        case 'N':
+            return 0, -1
+        case 'NE':
+            return 1, -1
+        case 'E':
+            return 1, 0
+        case 'SE':
+            return 1, 1
+        case 'S':
+            return 0, 1
+        case 'SW':
+            return -1, 1
+        case 'W':
+            return -1, 0
+        case 'NW':
+            return -1, -1
+
+
 def get_all_adjacent(point: tuple[int, int], directions=DIRECTIONS) -> Generator[tuple[int, int]]:
     """
     Gets all points adjacent to the specified point
