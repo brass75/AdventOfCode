@@ -52,7 +52,7 @@ class GridBase:
         for i, line in enumerate(lines):
             for j in range(0, len(line), char_width):
                 k = (j // char_width, i)
-                v = func(line[j : j + char_width]) if func else line[j: j + char_width]
+                v = func(line[j : j + char_width]) if func else line[j : j + char_width]
                 if ignore and v == ignore:
                     continue
                 temp_dict.update({k: v})

@@ -1,9 +1,9 @@
+from collections import defaultdict
 from heapq import heappop, heappush
-from typing import Any
 
-from aoc_lib import get_adjacent, GridBase, solve_problem
+from aoc_lib import GridBase, get_adjacent, solve_problem
 
-RIGHT_TURN_SCORE = 1001
+TURN_SCORE = 1001
 
 INPUT = open('data/day16.txt').read()
 
@@ -43,43 +43,56 @@ TEST_INPUT2 = """#################
 
 POINT_MAPPING = {
     'E': {
-        'N': RIGHT_TURN_SCORE,
-        'S': RIGHT_TURN_SCORE,
+        'N': TURN_SCORE,
+        'S': TURN_SCORE,
         'E': 1,
     },
     'W': {
-        'N': RIGHT_TURN_SCORE,
-        'S': RIGHT_TURN_SCORE,
+        'N': TURN_SCORE,
+        'S': TURN_SCORE,
         'W': 1,
     },
     'N': {
-        'E': RIGHT_TURN_SCORE,
-        'W': RIGHT_TURN_SCORE,
+        'E': TURN_SCORE,
+        'W': TURN_SCORE,
         'N': 1,
     },
     'S': {
-        'E': RIGHT_TURN_SCORE,
-        'W': RIGHT_TURN_SCORE,
+        'E': TURN_SCORE,
+        'W': TURN_SCORE,
         'S': 1,
     },
 }
 
 
-def fewest_points(grid: GridBase, start: tuple[int, int], end: tuple[int, int], direction: str) -> int:
-    q = [(0, start, direction)]
+def fewest_points(grid: GridBase, start: tuple[int, int], end: tuple[int, int], direction: str) -> dict:
+    q = [(0, start, direction, tuple())]
     seen = set()
-    scores = set()
+    paths = defaultdict(set)
+    seen_count = defaultdict(int)
+    min_score = None
     while q:
-        score, curr, direction = heappop(q)
-        if curr == end:
-            scores.add(score)
-        if (curr, direction) in seen:
+        score, curr, direction, steps = heappop(q)
+        if min_score and score > min_score:
+            # If this is higher than the current highest score we can ignore it.
             continue
-        seen.add((curr, direction))
+        if curr == end:
+            min_score = min(score, min_score) if min_score else score
+            paths[score].update(steps)
+            paths[score].add(curr)
+            continue
+        if (curr, direction, steps) in seen:
+            continue
+        seen_count[(curr, direction)] += 1
+        if seen_count[(curr, direction)] > 20:
+            # This is the lowest number I found here that gives me the correct answer.
+            continue
+        seen.add((curr, direction, steps))
         for dir_options, differential in POINT_MAPPING[direction].items():
-            if (next_point := get_adjacent(dir_options, curr)) and next_point in grid and grid[next_point] != '#':
-                heappush(q, (score + differential, next_point, dir_options))
-    return min(scores)
+            next_point = get_adjacent(dir_options, curr)
+            if next_point in grid and grid[next_point] != '#':
+                heappush(q, (score + differential, next_point, dir_options, (*steps, curr)))
+    return paths
 
 
 def find_start_and_end(grid: GridBase) -> tuple[tuple[int, int], tuple[int, int]]:
@@ -93,11 +106,15 @@ def find_start_and_end(grid: GridBase) -> tuple[tuple[int, int], tuple[int, int]
             return start, end
 
 
-
 def solve(input_: str) -> int:
     grid = GridBase(input_)
     start, end = find_start_and_end(grid)
-    return fewest_points(grid, start, end, 'E')
+    paths = fewest_points(grid, start, end, 'E')
+    shortest = min(paths.keys())
+    # The shortest path is the answer for part1 and the number of spaces you could touch in a path with that
+    # length is the answer to part2. It doesn't make sense to run them separately so just print the answer to both here.
+    print(f'{shortest=} {len(paths[shortest])=}')
+    return shortest
 
 
 if __name__ == '__main__':
