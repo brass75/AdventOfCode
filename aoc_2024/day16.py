@@ -89,7 +89,7 @@ def fewest_points(grid: GridBase, start: tuple[int, int], end: tuple[int, int], 
         # Unlike a normal DFS we want all possible options for the shortest path. So we do need to check every possible
         # shortest path to get the spaces we can pass through.
         seen_count[(curr, direction)] += 1
-        if seen_count[(curr, direction)] > 19:
+        if seen_count[(curr, direction)] >= 20:
             # This is the lowest number I found here that gives me the correct answer.
             continue
         for dir_options, differential in POINT_MAPPING[direction].items():
