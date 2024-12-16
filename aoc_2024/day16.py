@@ -120,20 +120,19 @@ def find_start_and_end(grid: GridBase) -> tuple[tuple[int, int], tuple[int, int]
             return start, end
 
 
-def solve(input_: str) -> int:
+def solve(input_: str) -> tuple[int, int]:
     grid = GridBase(input_)
     start, end = find_start_and_end(grid)
     paths = fewest_points(grid, start, end, 'E')
     shortest = min(paths.keys())
     # The shortest path is the answer for part1 and the number of spaces you could touch in a path with that
     # length is the answer to part2. It doesn't make sense to run them separately so just print the answer to both here.
-    print(f'{shortest=} {len(paths[shortest])=}')
-    return shortest
+    return shortest, len(paths[shortest])
 
 
 if __name__ == '__main__':
     part1_args = []
-    expected_1 = [(7036, [TEST_INPUT]), (11048, [TEST_INPUT2])]
+    expected_1 = [((7036, 45), [TEST_INPUT]), ((11048, 64), [TEST_INPUT2])]
     func_1 = solve
 
     part2_args = []
