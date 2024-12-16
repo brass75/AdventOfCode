@@ -66,11 +66,16 @@ POINT_MAPPING = {
 
 
 def fewest_points(grid: GridBase, start: tuple[int, int], end: tuple[int, int], direction: str) -> dict:
+    # Our queue contains:
+    #  - The score (initializes to 0)
+    #  - The current space we're checking (The "start" parameter)
+    #  - The direction we're facing (The "direction" parameter)
+    #  - A tuple containing the steps we've taken so far
     q = [(0, start, direction, tuple())]
-    seen = set()
     paths = defaultdict(set)
     seen_count = defaultdict(int)
     min_score = None
+    cache = dict()
     while q:
         score, curr, direction, steps = heappop(q)
         if min_score and score > min_score:
@@ -81,17 +86,26 @@ def fewest_points(grid: GridBase, start: tuple[int, int], end: tuple[int, int], 
             paths[score].update(steps)
             paths[score].add(curr)
             continue
-        if (curr, direction, steps) in seen:
-            continue
+        # Unlike a normal DFS we want all possible options for the shortest path. So we do need to check every possible
+        # shortest path to get the spaces we can pass through.
         seen_count[(curr, direction)] += 1
-        if seen_count[(curr, direction)] > 20:
+        if seen_count[(curr, direction)] > 19:
             # This is the lowest number I found here that gives me the correct answer.
             continue
-        seen.add((curr, direction, steps))
         for dir_options, differential in POINT_MAPPING[direction].items():
+            if next_point := cache.get((curr, dir_options)):
+                if next_point != (-1, -1):
+                    heappush(q, (score + differential, next_point, dir_options, (*steps, curr)))
+                continue
             next_point = get_adjacent(dir_options, curr)
             if next_point in grid and grid[next_point] != '#':
                 heappush(q, (score + differential, next_point, dir_options, (*steps, curr)))
+                # Add it to the cache so we don't need to compute it again.
+                cache[(curr, dir_options)] = next_point
+            else:
+                # Still add it to the cache with something that tells us to ignore it.
+                cache[(curr, dir_options)] = (-1, -1)
+
     return paths
 
 
