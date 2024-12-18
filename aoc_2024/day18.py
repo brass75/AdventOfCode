@@ -1,3 +1,4 @@
+import copy
 import re
 from collections import deque
 
@@ -50,11 +51,26 @@ def solve(input_: str, fallen: int, size: int, find_blockage: bool = False) -> i
     grid = get_grid(dropped, size)
     if not find_blockage:
         return grid.shortest_path((0, 0), (size - 1, size - 1), '#')
-    while blocked:
-        obstacle = blocked.popleft()
-        grid.add_obstacle(obstacle)
-        if not grid.shortest_path((0, 0), (size - 1, size - 1), '#'):
-            return obstacle
+    # Binary search for the answer
+    low = 0
+    high = len(blocked)
+    # Loop until the high and low catch up to one another.
+    while low <= high:
+        middle = (low + high) // 2
+        # Copy the grid so we have something clean to work on.
+        grid_copy = copy.deepcopy(grid)
+        # You can't slice a deque so we need to do this comprehension. Because it's a generator
+        # comprehension it doesn't add any actual time to the running vs. a slice.
+        for point in (point for i, point in enumerate(blocked) if i < middle):
+            # Add the obstacles up to the midpoint.
+            grid_copy.add_obstacle(point)
+        if not grid_copy.shortest_path((0, 0), (size - 1, size - 1), '#'):
+            # We're blocked so this is the lowest potential answer.
+            high = middle - 1
+        else:
+            # We're not blocked so the answer has to be higher than this.
+            low = middle + 1
+    return blocked[high]
 
 
 if __name__ == '__main__':
