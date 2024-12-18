@@ -1,7 +1,7 @@
+import re
 from collections import deque
 
 from aoc_lib import GridBase, solve_problem
-import re
 
 INPUT = open('data/day18.txt').read()
 
@@ -49,11 +49,11 @@ def solve(input_: str, fallen: int, size: int, find_blockage: bool = False) -> i
     dropped = {blocked.popleft() for _ in range(fallen)}
     grid = get_grid(dropped, size)
     if not find_blockage:
-        return grid.shortest_path((0,0), (size - 1, size - 1), '#')
+        return grid.shortest_path((0, 0), (size - 1, size - 1), '#')
     while blocked:
         obstacle = blocked.popleft()
         grid.add_obstacle(obstacle)
-        if not grid.shortest_path((0,0), (size - 1, size - 1), '#'):
+        if not grid.shortest_path((0, 0), (size - 1, size - 1), '#'):
             return obstacle
 
 
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     func_1 = solve
 
     part2_args = [1024, 71, True]
-    expected_2 = [((6,1), [TEST_INPUT, 12, 7, True])]
+    expected_2 = [((6, 1), [TEST_INPUT, 12, 7, True])]
     func_2 = solve
 
     if expected_1:
