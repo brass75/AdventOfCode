@@ -147,6 +147,11 @@ class GridBase:
                 + ''.join(f'{self.grid.get((i, j), self.ignore):{offset}}' for i in range(self.length))
             )
 
+    def add_obstacle(self, obstacle: tuple[int, int], marker: str = '#') -> None:
+        if obstacle not in self.grid:
+            raise KeyError(f'obstacle {obstacle} not in grid')
+        self.grid[obstacle] = marker
+
 
 def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:
     """
