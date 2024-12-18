@@ -1,4 +1,4 @@
-from collections.abc import Callable, Generator
+from collections.abc import Callable, Generator, Iterable
 from heapq import heappop, heappush
 from typing import Any
 
@@ -101,6 +101,7 @@ class GridBase:
         max_length: int = 0,
         most: int = 1,
         least: int = 1,
+        additional_obstacles: Iterable = None,
     ) -> int:
         """
         Returns the shortest path from start to end
@@ -130,7 +131,12 @@ class GridBase:
                 for i in range(1, most + 1):
                     # Increment the coordinates we're looking at
                     nx, ny = nx + dx, ny + dy
-                    if (nx, ny) not in self or (obstacle and self[(nx, ny)] == obstacle):
+                    point = (nx, ny)
+                    if (
+                        point not in self
+                        or (additional_obstacles and point in additional_obstacles)
+                        or (obstacle and self[point] == obstacle)
+                    ):
                         continue
                     if i >= least:
                         # If we're beyond the minimum number of steps add to the heap.

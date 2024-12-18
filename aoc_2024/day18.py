@@ -1,4 +1,3 @@
-import copy
 import re
 from collections import deque
 
@@ -33,44 +32,35 @@ TEST_INPUT = """5,4
 2,0"""
 
 
-def get_grid(dropped: set[tuple[int, int]], size: int) -> GridBase:
-    s = ''
-    for y in range(size):
-        for x in range(size):
-            s += '#' if (x, y) in dropped else '.'
-        s += '\n'
-    grid = GridBase(s)
-    return grid
-
-
-def solve(input_: str, fallen: int, size: int, find_blockage: bool = False) -> int | tuple[int, int]:
-    blocked = deque()
-    for line in input_.splitlines():
-        blocked.append(tuple(map(int, re.findall(r'-?\d+', line))))
-    dropped = {blocked.popleft() for _ in range(fallen)}
-    grid = get_grid(dropped, size)
-    if not find_blockage:
-        return grid.shortest_path((0, 0), (size - 1, size - 1), '#')
-    # Binary search for the answer
+def search_for_first_obstacle(blocked, dropped, grid, size):
+    """Binary search for the first obstacle that prevents exiting"""
     low = 0
     high = len(blocked)
     # Loop until the high and low catch up to one another.
     while low <= high:
         middle = (low + high) // 2
-        # Copy the grid so we have something clean to work on.
-        grid_copy = copy.deepcopy(grid)
-        # You can't slice a deque so we need to do this comprehension. Because it's a generator
-        # comprehension it doesn't add any actual time to the running vs. a slice.
-        for point in (point for i, point in enumerate(blocked) if i < middle):
-            # Add the obstacles up to the midpoint.
-            grid_copy.add_obstacle(point)
-        if not grid_copy.shortest_path((0, 0), (size - 1, size - 1), '#'):
+        if not grid.shortest_path((0, 0), (size - 1, size - 1), additional_obstacles={*blocked[:middle], *dropped}):
             # We're blocked so this is the lowest potential answer.
             high = middle - 1
         else:
             # We're not blocked so the answer has to be higher than this.
             low = middle + 1
     return blocked[high]
+
+
+def solve(input_: str, fallen: int, size: int, find_blockage: bool = False) -> int | tuple[int, int]:
+    blocked = deque()
+    for line in input_.splitlines():
+        blocked.append(tuple(map(int, re.findall(r'-?\d+', line))))
+    # Get the group of points with obstacles that make up the start. Use a set for fast comparison in grid.shortest_path
+    dropped = {blocked.popleft() for _ in range(fallen)}
+    # Starting grid is all valid. We'll dynamically add the obstacles when we check it.
+    grid = GridBase('\n'.join('.' * size for _ in range(size)))
+    return (
+        search_for_first_obstacle(list(blocked), dropped, grid, size)
+        if find_blockage
+        else grid.shortest_path((0, 0), (size - 1, size - 1), additional_obstacles=dropped)
+    )
 
 
 if __name__ == '__main__':
