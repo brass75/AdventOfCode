@@ -133,7 +133,8 @@ class GridBase:
                     nx, ny = nx + dx, ny + dy
                     point = (nx, ny)
                     if (
-                        not (space := self.get(point)) or (obstacle and space == obstacle)
+                        not (space := self.get(point))
+                        or (obstacle and space == obstacle)
                         or (additional_obstacles and point in additional_obstacles)
                     ):
                         continue

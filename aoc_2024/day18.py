@@ -32,7 +32,9 @@ TEST_INPUT = """5,4
 2,0"""
 
 
-def search_for_first_obstacle(blocked, dropped, grid, size):
+def search_for_first_obstacle(
+    blocked: list[tuple[int, int]], dropped: set[tuple[int, int]], grid: GridBase, size: int
+) -> tuple[int, int]:
     """Binary search for the first obstacle that prevents exiting"""
     low = 0
     high = len(blocked)
