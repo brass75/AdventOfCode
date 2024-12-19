@@ -1,5 +1,5 @@
 import functools
-
+from multiprocessing import Pool
 from aoc_lib import solve_problem
 
 INPUT = open('data/day19.txt').read()
@@ -42,7 +42,7 @@ def solve(input_: str, part2: bool = False) -> int:
         if (towel_group := tuple(towel for towel in towels if towel in pattern))
         and all(c in ''.join(towel_group) for c in pattern)
     }
-    possibilities = (pattern_possible(pattern=pattern, towels=towels) for pattern, towels in mappings.items() if towels)
+    possibilities = Pool(10).starmap(pattern_possible, mappings.items())
     return sum(possibilities) if part2 else sum(map(bool, possibilities))
 
 
