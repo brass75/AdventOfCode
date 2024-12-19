@@ -28,7 +28,7 @@ def solve_problem(func: Callable, part: int, test_data: tuple[int, Any] | None, 
     print(f'Part {part}{test_string}: {result} [elapsed time: {run_time * 1000:.5f}ms]')
 
 
-def tracer(func):
+def mem_trace(func):
     """Tracer decorator"""
 
     def wrapper(*args, **kwargs):

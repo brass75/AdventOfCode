@@ -1,4 +1,4 @@
-from .aoc_lib import solve_problem, timed_call, tracer
+from .aoc_lib import solve_problem, timed_call, mem_trace
 from .functions import calculate_polygon_area, quadratic_sequence
 from .grid import (
     DIRECTIONS,
@@ -25,7 +25,7 @@ __all__ = [
     'WalkingGrid',
     'InLoop',
     'get_all_adjacent',
-    'tracer',
+    'mem_trace',
     'get_different',
     'direction_deltas',
 ]
