@@ -1,5 +1,6 @@
 import functools
 from multiprocessing import Pool
+
 from aoc_lib import solve_problem
 
 INPUT = open('data/day19.txt').read()

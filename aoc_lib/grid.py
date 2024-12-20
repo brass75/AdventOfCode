@@ -5,7 +5,7 @@ from typing import Any
 from aoc_lib.hashable_dict import HashableDict
 
 DIRECTIONS = ('N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW')
-
+CARDINAL_DIRECTIONS = ('N', 'E', 'S', 'W')
 
 TURNS = {
     'N': 'E',
@@ -102,7 +102,8 @@ class GridBase:
         most: int = 1,
         least: int = 1,
         additional_obstacles: Iterable = None,
-    ) -> int:
+        steps: list = None,
+    ) -> int | tuple[int, list]:
         """
         Returns the shortest path from start to end
 
@@ -112,13 +113,15 @@ class GridBase:
         :param max_length: maximum length of shortest path
         :param most: most allowed stops.
         :param least: least allowed stops.
+        :param additional_obstacles: additional obstacles.
+        :param steps: Flag to show whether to return the valid steps..
         """
-        q = [(0, *start, 0, 0)]
+        q = [(0, *start, 0, 0, steps)]
         seen = set()
         while q:
-            length, x, y, px, py = heappop(q)
+            length, x, y, px, py, steps = heappop(q)
             if end == (x, y) or (max_length and length > max_length):
-                return length
+                return (length, steps) if steps else length
             if (x, y, px, py) in seen:
                 continue
             seen.add((x, y, px, py))
@@ -140,7 +143,10 @@ class GridBase:
                         continue
                     if i >= least:
                         # If we're beyond the minimum number of steps add to the heap.
-                        heappush(q, (loop + i, nx, ny, dx, dy))
+                        new_steps = steps
+                        if steps is not None:
+                            new_steps = [*steps, (nx, ny)]
+                        heappush(q, (loop + i, nx, ny, dx, dy, new_steps))
 
     def print(self):
         """Print the grid with axes markers"""
@@ -277,3 +283,8 @@ class WalkingGrid(GridBase):
     def path(self) -> set:
         """The set of locations in the followed path"""
         return self.walk()
+
+
+class EmptyGrid(GridBase):
+    def __init__(self, width: int, height: int):
+        super().__init__('\n'.join('.' * width for _ in range(height)))
