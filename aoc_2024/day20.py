@@ -1,4 +1,7 @@
-from aoc_lib import CARDINAL_DIRECTIONS, GridBase, get_adjacent, solve_problem
+from functools import partial
+from multiprocessing import Pool
+
+from aoc_lib import GridBase, solve_problem
 
 INPUT = open('data/day20.txt').read()
 
@@ -19,62 +22,40 @@ TEST_INPUT = """###############
 ###############"""
 
 
-def find_start_and_end(grid: GridBase) -> tuple[tuple[int, int], tuple[int, int]]:
-    start, end = None, None
-    for k, v in grid.items:
-        if v == 'S':
-            start = k
-        if v == 'E':
-            end = k
-        if start and end:
-            return start, end
+def cheats(path: dict, radius: int, min_savings, point_steps) -> int:
+    # Found is a dict to avoid duplications
+    found = dict()
+    point, steps = point_steps
+    x, y = point
+    for i in range(-1 * radius, radius + 1):
+        for j in range(-1 * radius, radius + 1):
+            if abs(i) + abs(j) <= radius:
+                check = (x + i, y + j)
+                if check in path and (
+                    steps > (new_steps := path[check])
+                    and (savings := steps - new_steps - abs(i) - abs(j)) >= min_savings
+                ):
+                    found[(point, check)] = savings
+    # We only care about how many we found so just return that.
+    return len(found)
 
 
-def get_shortest_path(
-    grid: GridBase, start: tuple[int, int], end: tuple[int, int], obstacles: set, removed: tuple[int, int], max_length: int = None
-) -> tuple[tuple[int, int], int | tuple[int, list]]:
-    return removed, grid.shortest_path(start, end, additional_obstacles=obstacles.difference({removed}), max_length=max_length)
-
-
-def solve(input_: str, max_savings: int) -> int:
+def solve(input_: str, min_savings: int, max_cheat: int) -> int:
     grid = GridBase(input_)
-    start, end = find_start_and_end(grid)
-    obstacles = {k for k, v in grid.items if v == '#'}
-    dist, path = grid.shortest_path(start, end, steps=[], obstacle='#')
-    removables = set()
-    for blocked in obstacles:
-        if not any(get_adjacent(direction, blocked) in path for direction in CARDINAL_DIRECTIONS):
-            # This is not adjacent to the path - we can ignore it.
-            continue
-        if blocked[0] in [0, grid.length - 1] or blocked[1] in [0, grid.height - 1]:
-            # This is an edge - we can ignore it.
-            continue
-        for direction in CARDINAL_DIRECTIONS:
-            adj = get_adjacent(direction, blocked)
-            if check := grid.get(adj):
-                if check != '#':
-                    removables.add(blocked)
-                    continue
-    # Sorting to make debugging easier.
-    removables = sorted(removables)
-    count = 0
-    from functools import partial
-
-    p_func = partial(get_shortest_path, grid, start, end, obstacles, max_length=dist - max_savings + 1)
-    all_paths = sorted(map(p_func, removables), key=lambda p: p[1])
-    for removed, shortest in all_paths:
-        # used = all(r in steps for r in removed)
-        count += dist - shortest >= max_savings
-    return count
+    # We don't actually care about how many steps are needed for the shortest path - just what it is.
+    _, path_list = grid.shortest_path(*grid.find_start_and_end(), steps=True, obstacle='#')
+    path = {p: i for i, p in enumerate(path_list)}
+    p_func = partial(cheats, path, max_cheat, min_savings)
+    return sum(Pool(10).map(p_func, path.items()))
 
 
 if __name__ == '__main__':
-    part1_args = [100]
-    expected_1 = [(4, [TEST_INPUT, 36])]
+    part1_args = [100, 2]
+    expected_1 = [(4, [TEST_INPUT, 36, 2])]
     func_1 = solve
 
-    part2_args = []
-    expected_2 = []
+    part2_args = [100, 20]
+    expected_2 = [(29, [TEST_INPUT, 72, 20])]
     func_2 = solve
 
     if expected_1:

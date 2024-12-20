@@ -1,3 +1,4 @@
+import functools
 from collections.abc import Callable, Generator, Iterable
 from heapq import heappop, heappush
 from typing import Any
@@ -93,6 +94,7 @@ class GridBase:
     def get(self, item, default=None):
         return self.grid.get(item, default)
 
+    @functools.cache
     def shortest_path(
         self,
         start: tuple[int, int],
@@ -102,7 +104,7 @@ class GridBase:
         most: int = 1,
         least: int = 1,
         additional_obstacles: Iterable = None,
-        steps: list = None,
+        steps: bool = False,
     ) -> int | tuple[int, list]:
         """
         Returns the shortest path from start to end
@@ -114,8 +116,10 @@ class GridBase:
         :param most: most allowed stops.
         :param least: least allowed stops.
         :param additional_obstacles: additional obstacles.
-        :param steps: Flag to show whether to return the valid steps..
+        :param steps: Flag to show whether to return the valid steps.
         """
+        # Don't forget to add the first step if we need the actual path.
+        steps = [start] if steps else False
         q = [(0, *start, 0, 0, steps)]
         seen = set()
         while q:
@@ -142,11 +146,19 @@ class GridBase:
                     ):
                         continue
                     if i >= least:
+                        new_steps = [*steps, (nx, ny)] if steps else steps
                         # If we're beyond the minimum number of steps add to the heap.
-                        new_steps = steps
-                        if steps is not None:
-                            new_steps = [*steps, (nx, ny)]
                         heappush(q, (loop + i, nx, ny, dx, dy, new_steps))
+
+    def find_start_and_end(grid, start_char: str = 'S', end_char: str = 'E') -> tuple[tuple[int, int], tuple[int, int]]:
+        start, end = None, None
+        for k, v in grid.items:
+            if v == start_char:
+                start = k
+            if v == end_char:
+                end = k
+            if start and end:
+                return start, end
 
     def print(self):
         """Print the grid with axes markers"""

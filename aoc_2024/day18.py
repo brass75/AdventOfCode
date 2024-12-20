@@ -41,7 +41,9 @@ def search_for_first_obstacle(
     # Loop until the high and low catch up to one another.
     while low <= high:
         middle = (low + high) // 2
-        if not grid.shortest_path((0, 0), (size - 1, size - 1), additional_obstacles={*blocked[:middle], *dropped}):
+        if not grid.shortest_path(
+            (0, 0), (size - 1, size - 1), additional_obstacles=tuple({*blocked[:middle], *dropped})
+        ):
             # We're blocked so this is the lowest potential answer.
             high = middle - 1
         else:
@@ -61,7 +63,7 @@ def solve(input_: str, fallen: int, size: int, find_blockage: bool = False) -> i
     return (
         search_for_first_obstacle(list(blocked), dropped, grid, size)
         if find_blockage
-        else grid.shortest_path((0, 0), (size - 1, size - 1), additional_obstacles=dropped)
+        else grid.shortest_path((0, 0), (size - 1, size - 1), additional_obstacles=tuple(dropped))
     )
 
 
