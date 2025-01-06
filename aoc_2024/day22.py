@@ -20,32 +20,13 @@ def prune(num: int) -> int:
     return num % 16777216
 
 
-@cache
-def step1(num: int) -> int:
-    num = mix(num, num * 64)
-    return prune(num)
-
-
-@cache
-def step2(num: int) -> int:
-    num = mix(num, num // 32)
-    return prune(num)
-
-
-@cache
-def step3(num: int) -> int:
-    num = mix(num, num * 2048)
-    return prune(num)
-
-
-def get_next_secret(num: int) -> int:
-    return step3(step2(step1(num)))
-
-
-def get_secret(secret: int) -> list:
+def get_secret(secret: int) -> int:
     for _ in range(2000):
-        secret = get_next_secret(secret)
+        secret = prune(mix(secret, secret * 64))
+        secret = prune(mix(secret, secret // 32))
+        secret = prune(mix(secret, secret * 2048))
     return secret
+
 
 def solve(input_: str) -> int:
     secrets = [int(line) for line in input_.splitlines()]
