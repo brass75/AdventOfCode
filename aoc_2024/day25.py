@@ -46,6 +46,7 @@ TEST_INPUT = """#####
 def parse_lock(lock: str) -> list[int]:
     lock_lines = lock.splitlines()
     cols = [0] * len(lock_lines[0])
+    # Skip the first list - for a lock it doesn't contribute and for a key it's all '.'
     for line in lock_lines[1:]:
         for j,c  in enumerate(line):
             cols[j] += c == '#'
@@ -65,11 +66,7 @@ def parse_input(input_: str) -> tuple[list, list, int]:
 
 def solve(input_: str) -> int:
     locks, keys, height = parse_input(input_)
-    count = 0
-    for lock in locks:
-        for key in keys:
-            count += all(kc + lc < height for lc,kc in zip(lock, key))
-    return count
+    return sum(all(kc + lc < height for kc, lc in zip(key, lock)) for lock in locks for key in keys)
 
 
 if __name__ == '__main__':
