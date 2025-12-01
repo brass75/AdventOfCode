@@ -1,4 +1,5 @@
 import re
+from collections.abc import Generator
 from dataclasses import dataclass
 
 from aoc_lib import solve_problem
@@ -32,42 +33,42 @@ class Turn:
         return other + (self.dir * self.count)
 
 
-def parse_input(input_: str) -> list[Turn]:
-    parsed = list()
+def parse_input(input_: str) -> Generator[Turn]:
     for line in input_.strip().splitlines():
-        dir, count = re.match(r'([LR])(\d+)', line).groups()
-        match dir:
+        dir_, count = re.match(r'([LR])(\d+)', line).groups()
+        match dir_:
             case'L':
-                parsed.append(Turn(-1, int(count)))
+                yield Turn(-1, int(count))
             case 'R':
-                parsed.append(Turn(1, int(count)))
-    return parsed
+                yield Turn(1, int(count))
 
 
 def solve2(input_: str) -> int:
     turns = parse_input(input_)
+    # The dial starts at 50
     curr = 50
     count = 0
     for turn in turns:
         # Total number of cycles
         count += turn.count // 100
-        for _ in range(turn.count % 100):
-            # Turn the dial. Increment if we hit 0.
+        clicks = turn.count % 100
+        while clicks:
+            clicks -= 1
+            # Turn the dial.
             curr += turn.dir
             if curr < 0 or curr > 99:
+                # If we exit the 0..99 range, get back into it.
                 curr %= 100
-            count += curr == 0
+            if curr == 0:
+                # If we're pointing at 0 we can move the dial the remaining number of clicks,
+                # increment the counter, and exit the loop.
+                curr += turn.dir * clicks
+                count += 1
+                break
     return count
 
-def solve1(input_: str) -> int:
-    turns = parse_input(input_)
-    curr = 50
-    count = 0
-    for turn in turns:
-        curr += (turn.dir * (turn.count % 100))
-        curr %= 100
-        count += curr == 0
-    return count
+def solve1(input_: str, curr: int = 50) -> int:
+    return sum(1 for turn in parse_input(input_) if (curr := (curr + turn) % 100) == 0)
 
 if __name__ == '__main__':
     part1_args = []
