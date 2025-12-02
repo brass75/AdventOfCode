@@ -139,7 +139,8 @@ def run_adder(states: dict, commands: Iterable[Command]) -> int:
 def join_bits(states: dict, prefix: str = 'z') -> int:
     rc = 0
     for wire, state in states.items():
-        # We only care about the wires with the noted prefix. We can also ignore any wires at 0 since the | will ignore them.
+        # We only care about the wires with the noted prefix.
+        # We can also ignore any wires at 0 since the | will ignore them.
         if not wire.startswith(prefix) or not state:
             continue
 
