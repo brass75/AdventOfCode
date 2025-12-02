@@ -1,4 +1,4 @@
-from collections.abc import Callable
+from collections.abc import Callable, Generator
 from multiprocessing.pool import Pool
 
 from aoc_lib import solve_problem
@@ -11,28 +11,28 @@ TEST_INPUT = (
     '446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124'
 )
 
-CPUS = 8
+CPUS = 10
 
 
-def parse_input(input_: str) -> list[tuple[int, int]]:
-    ranges = list()
-    for range in input_.split(','):
-        ranges.append(tuple(map(int, range.split('-'))))
-    return ranges
+def parse_input(input_: str) -> Generator:
+    return (tuple(map(int, range.split('-'))) for range in input_.split(','))
 
 
-def solve(input_: str, check: Callable) -> int:
-    return sum(
-        Pool(CPUS).map(check, (pid for start, end in parse_input(input_) for pid in map(str, range(start, end + 1))))
-    )
+def solve(input_: str, check: Callable, pool: Pool) -> int:
+    return sum(pool.map(check, (pid for start, end in parse_input(input_) for pid in map(str, range(start, end + 1)))))
 
 
 def check_2(pid: str) -> int:
     plen = len(pid)
-    for stop in (n for n in range(1, (plen // 2) + 1) if plen % n == 0):
-        if pid == pid[:stop] * (plen // stop):
-            return int(pid)
-    return 0
+    return (
+        int(pid)
+        if any(
+            stop
+            for stop in (n for n in range(1, (plen // 2) + 1) if plen % n == 0)
+            if pid == pid[:stop] * (plen // stop)
+        )
+        else 0
+    )
 
 
 def check_1(pid: str) -> int:
@@ -40,12 +40,13 @@ def check_1(pid: str) -> int:
 
 
 if __name__ == '__main__':
-    part1_args = [check_1]
-    expected_1 = [(1227775554, [TEST_INPUT, check_1])]
+    pool = Pool(CPUS)
+    part1_args = [check_1, pool]
+    expected_1 = [(1227775554, [TEST_INPUT, check_1, pool])]
     func_1 = solve
 
-    part2_args = [check_2]
-    expected_2 = [(4174379265, [TEST_INPUT, check_2])]
+    part2_args = [check_2, pool]
+    expected_2 = [(4174379265, [TEST_INPUT, check_2, pool])]
     func_2 = solve
 
     if expected_1:
