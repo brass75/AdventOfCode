@@ -48,7 +48,7 @@ def parse_lock(lock: str) -> list[int]:
     cols = [0] * len(lock_lines[0])
     # Skip the first list - for a lock it doesn't contribute and for a key it's all '.'
     for line in lock_lines[1:]:
-        for j,c  in enumerate(line):
+        for j, c in enumerate(line):
             cols[j] += c == '#'
     return cols
 
