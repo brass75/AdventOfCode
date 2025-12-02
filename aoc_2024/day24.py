@@ -1,13 +1,10 @@
+import re
 from collections.abc import Iterable
-from copy import copy
 from dataclasses import dataclass
-from pprint import pp
+
+import graphviz
 
 from aoc_lib import solve_problem
-import re
-from collections import defaultdict
-import itertools
-import graphviz
 
 INPUT = open('data/day24.txt').read()
 
@@ -90,8 +87,11 @@ x03 AND y03 -> z03
 x04 AND y04 -> z04
 x05 AND y05 -> z00"""
 
-COMMAND_PATTERN = re.compile(r'(?P<input1>[a-z0-9]+) (?P<operation>X?OR|AND) (?P<input2>[a-z0-9]+) -> (?P<output>[a-z0-9]+)')
+COMMAND_PATTERN = re.compile(
+    r'(?P<input1>[a-z0-9]+) (?P<operation>X?OR|AND) (?P<input2>[a-z0-9]+) -> (?P<output>[a-z0-9]+)'
+)
 STARTING_PATTERN = re.compile(r'([a-z\d]+): (\d)')
+
 
 @dataclass
 class Command:
@@ -103,7 +103,9 @@ class Command:
     def swap(self, other):
         output1 = self.output
         output2 = other.output
-        return Command(self.in1, self.operation, self.in2, output2), Command(other.in1, other.operation, other.in2, output1)
+        return Command(self.in1, self.operation, self.in2, output2), Command(
+            other.in1, other.operation, other.in2, output1
+        )
 
 
 def parse_input(input_: str) -> tuple[dict, list]:
@@ -152,6 +154,7 @@ def solve(input_: str) -> int:
     states, commands = parse_input(input_)
     return run_adder(states, commands)
 
+
 def solve2(input_: str, post_fix: str) -> str:
     if post_fix:
         # Ignoring the test - need to leave this in for it to run properly.
@@ -186,6 +189,7 @@ def solve2(input_: str, post_fix: str) -> str:
     for pair in pairs:
         output.extend(pair)
     return ','.join(sorted(output))
+
 
 if __name__ == '__main__':
     part1_args = []

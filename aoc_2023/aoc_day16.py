@@ -174,9 +174,9 @@ if __name__ == '__main__':
         for idx, e in enumerate(expected_2):
             e_total, e_params = e
             start = time.time()
-            assert (
-                total := solve(TEST_INPUT, *e_params)
-            ) == e_total, f'Test {1} for part 2 failed! {total=} {e_total=}'
+            assert (total := solve(TEST_INPUT, *e_params)) == e_total, (
+                f'Test {1} for part 2 failed! {total=} {e_total=}'
+            )
             print(f'Part 2: [test {idx}] {total} [elapsed time: {(time.time() - start) * 1000:.5f}ms]')
         start = time.time()
         total = solve(INPUT, True)

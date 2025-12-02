@@ -36,7 +36,7 @@ def mem_trace(func):
         tracemalloc.start()
         rc = func(*args, **kwargs)
         current, peak = tracemalloc.get_traced_memory()
-        print(f'Current memory usage for {func.__name__} is {current / 10 ** 6}MB; Peak was {peak / 10 ** 6}MB')
+        print(f'Current memory usage for {func.__name__} is {current / 10**6}MB; Peak was {peak / 10**6}MB')
         tracemalloc.stop()
         return rc
 

@@ -20,6 +20,7 @@ R14
 L82
 """
 
+
 @dataclass
 class Turn:
     dir: int
@@ -27,7 +28,6 @@ class Turn:
 
     def __add__(self, other):
         return other + (self.dir * self.count)
-
 
     def __radd__(self, other):
         return other + (self.dir * self.count)
@@ -37,7 +37,7 @@ def parse_input(input_: str) -> Generator[Turn]:
     for line in input_.strip().splitlines():
         dir_, count = re.match(r'([LR])(\d+)', line).groups()
         match dir_:
-            case'L':
+            case 'L':
                 yield Turn(-1, int(count))
             case 'R':
                 yield Turn(1, int(count))
@@ -67,8 +67,10 @@ def solve2(input_: str) -> int:
                 break
     return count
 
+
 def solve1(input_: str, curr: int = 50) -> int:
     return sum(1 for turn in parse_input(input_) if (curr := (curr + turn) % 100) == 0)
+
 
 if __name__ == '__main__':
     part1_args = []
