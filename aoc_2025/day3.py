@@ -1,5 +1,4 @@
 from collections import defaultdict, deque
-from functools import partial
 
 from aoc_lib import solve_problem
 
@@ -16,26 +15,42 @@ TEST_INPUT = """
 
 class BatteryBank:
     def __init__(self, size: int, bank: str):
+        """
+        Initialize a BatteryBank object
+
+        :param size: The number of digits we're looking for
+        :param bank: The string containing the battery definitions
+        """
         self.highest = ''
         indices = defaultdict(deque)
+        # Create a sorted dictionary with the key being the number and the
+        # value being the indices where it appears.
         for i, n in enumerate(bank):
             indices[n].append(i)
+        # Sort the dictionary, reversed, so we can process from largest to
+        # smallest number.
         indices = sorted(indices.items(), reverse=True)
         if len(indices[0][1]) >= size:
+            # If the highest number appears at least the number of times we're
+            # looking for it has to be the highest.
             self.highest = indices[0][0] * size
             return
         base_index = 0
         while size:
             for n, index in indices:
                 while index and index[0] < base_index:
+                    # Get rid of indices that we have already passed
                     index.popleft()
                 if not index:
+                    # If there are no indices left for that number there's nothing to do
                     continue
                 if index[0] + size <= len(bank):
+                    # If there's enough left after the first appearance of the number to
+                    # continue populating we take that number and then continue
                     self.highest += n
                     size -= 1
-                    base_index = index[0]
-                    index.popleft()
+                    base_index = index.popleft()
+                    # We need to break here to do the `while size` check.
                     break
 
     def __add__(self, other):
@@ -46,8 +61,7 @@ class BatteryBank:
 
 
 def solve(input_: str, count: int) -> int:
-    bank = partial(BatteryBank, count)
-    return sum(map(bank, input_.strip().splitlines()))
+    return sum(BatteryBank(size=count, bank=line) for line in input_.strip().splitlines())
 
 
 if __name__ == '__main__':
