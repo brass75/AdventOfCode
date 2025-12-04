@@ -176,6 +176,12 @@ class GridBase:
             raise KeyError(f'obstacle {obstacle} not in grid')
         self.grid[obstacle] = marker
 
+    def add_obstacles(self, obstacles: list[tuple[int, int]], marker: str = '#'):
+        for obstacle in obstacles:
+            if obstacle not in self.grid:
+                raise KeyError(f'obstacle {obstacle} not in grid')
+            self.grid[obstacle] = marker
+
 
 @functools.cache
 def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:

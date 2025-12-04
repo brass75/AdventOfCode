@@ -19,19 +19,13 @@ MAX_ADJACENT = 4
 
 
 def solve(input_: str, remove: bool = False) -> int:
-    grid = GridBase(input_.strip())
-    count = find_movable(grid)
-    while remove and (new_count := find_movable(grid)):
-        count += new_count
-    return count
+    return find_movable(GridBase(input_), remove)
 
 
-def find_movable(grid: GridBase) -> int:
+def find_movable(grid: GridBase, remove: bool) -> int:
     count = 0
     movable = list()
-    for spot, val in grid.items:
-        if val != '@':
-            continue
+    for spot, val in ((spot, val) for spot, val in grid.items if val == '@'):
         adj = 0
         for direction in DIRECTIONS:
             if (adj := adj + (grid.get(get_adjacent(direction, spot)) == '@')) >= MAX_ADJACENT:
@@ -39,8 +33,9 @@ def find_movable(grid: GridBase) -> int:
         else:
             count += 1
             movable.append(spot)
-    for spot in movable:
-        grid.add_obstacle(spot, '.')
+    if remove and count:
+        grid.add_obstacles(movable, marker='.')
+        return count + find_movable(grid, remove)
     return count
 
 
