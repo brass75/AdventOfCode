@@ -177,6 +177,7 @@ class GridBase:
         self.grid[obstacle] = marker
 
 
+@functools.cache
 def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:
     """
     Compute the next point in a grid in the selected direction
@@ -205,6 +206,7 @@ def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:
             return col - 1, row - 1
 
 
+@functools.cache
 def direction_deltas(direction: str) -> tuple[int, int]:
     match direction:
         case 'N':
