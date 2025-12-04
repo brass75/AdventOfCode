@@ -24,7 +24,6 @@ def solve(input_: str, remove: bool = False) -> int:
 
 def find_movable(grid: GridBase, remove: bool) -> int:
     count = 0
-    movable = list()
     for spot, val in ((spot, val) for spot, val in grid.items if val == '@'):
         adj = 0
         for direction in DIRECTIONS:
@@ -32,11 +31,9 @@ def find_movable(grid: GridBase, remove: bool) -> int:
                 break
         else:
             count += 1
-            movable.append(spot)
-    if remove and count:
-        grid.add_obstacles(movable, marker='.')
-        return count + find_movable(grid, remove)
-    return count
+            if remove:
+                grid.add_obstacle(spot, marker='.')
+    return count + find_movable(grid, remove) if remove and count else count
 
 
 if __name__ == '__main__':
