@@ -41,10 +41,7 @@ class BatteryBank:
                 while index and index[0] < base_index:
                     # Get rid of indices that we have already passed
                     index.popleft()
-                if not index:
-                    # If there are no indices left for that number there's nothing to do
-                    continue
-                if index[0] + size <= len(bank):
+                if index and index[0] + size <= len(bank):
                     # If there's enough left after the first appearance of the number to
                     # continue populating we take that number and then continue
                     self.highest += n
