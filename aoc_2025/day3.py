@@ -21,40 +21,49 @@ class BatteryBank:
         :param size: The number of digits we're looking for
         :param bank: The string containing the battery definitions
         """
-        self.highest = ''
-        indices = defaultdict(deque)
+        indices: dict[str, deque] = defaultdict(deque)
         # Create a sorted dictionary with the key being the number and the
         # value being the indices where it appears.
         for i, n in enumerate(bank):
             indices[n].append(i)
         # Sort the dictionary, reversed, so we can process from largest to
         # smallest number.
-        indices = sorted(indices.items(), reverse=True)
-        if len(indices[0][1]) >= size:
-            # If the highest number appears at least the number of times we're
-            # looking for it has to be the highest.
-            self.highest = indices[0][0] * size
-            return
-        base_index = 0
-        while size:
-            for n, index in indices:
-                while index and index[0] < base_index:
-                    # Get rid of indices that we have already passed
-                    index.popleft()
-                if index and index[0] + size <= len(bank):
-                    # If there's enough left after the first appearance of the number to
-                    # continue populating we take that number and then continue
-                    self.highest += n
-                    size -= 1
-                    base_index = index.popleft()
-                    # We need to break here to do the `while size` check.
-                    break
+        self._indices: list[tuple[str,deque[int]]] = sorted(indices.items(), reverse=True)
+
+        self._len = len(bank)
+        self._size = size
+        self._highest = None
+
+    @property
+    def highest(self) -> int:
+        if not self._highest:
+            self._highest = int(self._get_highest(self._indices, self._size, self._len))
+        return self._highest
+
+    def _get_highest(self, indices: list[tuple[str,deque[int]]], size: int, bank_len: int, base_index: int = 0) -> str:
+        """
+        Recursively determine the highest joltage for a given bank.
+
+        :param indices: The processed bank
+        :param size: The number of batteries to use
+        :param bank_len: The length of the bank
+        :param base_index: The last index processed. Defaults to 0
+        :return: The highest joltage available for the number of batteries permitted.
+        """
+        if not size:
+            return ''
+        for n, index in indices:
+            while index and index[0] < base_index:
+                index.popleft()
+            if index and index[0] + size <= bank_len:
+                return n + self._get_highest(indices, size - 1, bank_len, index.popleft())
+        return ''
 
     def __add__(self, other):
-        return int(self.highest) + other
+        return self.highest + other
 
     def __radd__(self, other):
-        return int(self.highest) + other
+        return self.highest + other
 
 
 def solve(input_: str, count: int) -> int:
