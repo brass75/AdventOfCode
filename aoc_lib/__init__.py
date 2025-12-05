@@ -13,6 +13,7 @@ from .grid import (
     get_different,
 )
 from .hashable_dict import HashableDict, HashableSet
+from .ranges import Range
 
 __all__ = [
     'solve_problem',
@@ -32,4 +33,5 @@ __all__ = [
     'direction_deltas',
     'EmptyGrid',
     'CARDINAL_DIRECTIONS',
+    'Range',
 ]
