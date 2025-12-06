@@ -19,20 +19,42 @@ def do_the_math(op: str, nums: Iterable[int]) -> int:
         return sum(nums)
 
 
-def solve(input_: str) -> int:
-    matrix = [re.split(r'\s+', line.strip()) for line in input_.strip().splitlines()]
-    operators = matrix.pop()
-    return sum(do_the_math(operators[n], map(int, (row[n].strip() for row in matrix))) for n in range(len(operators)))
-
-def solve2(input_: str) -> int:
+def solve(input_: str, transform: bool = False) -> int:
     rows = input_.splitlines()
-    ops = (c for c in rows.pop() if c != ' ')
-    problems = [[]]
-    for val in (''.join(map(str.strip, row)) for row in zip(*rows, strict=True)):
-        if val:
-            problems[-1].append(int(val))
-        else:
-            problems.append(list())
+    raw_ops = rows.pop()
+    ops = [c for c in raw_ops if c != ' ']
+    if transform:
+        problems = [[]]
+        for val in (''.join(map(str.strip, row)) for row in zip(*rows, strict=True)):
+            if val:
+                problems[-1].append(int(val))
+            else:
+                problems.append(list())
+    else:
+        matrix = [re.split(r'\s+', row.strip()) for row in rows]
+        problems = [[int(row[n].strip()) for row in matrix] for n in range(len(ops))]
+    return sum(do_the_math(op, problem) for op, problem in zip(ops, problems, strict=True))
+
+
+def pattern_solve(input_: str) -> int:
+    """Solution for part 2 using pattern matching to parse"""
+    rows = input_.splitlines()
+    raw_ops = rows.pop()
+    ops = [c for c in raw_ops if c != ' ']
+    col_lens = [
+        len(group) - 1 for group in (m.group(0) for m in re.finditer(r'([+*]\s*?)(?:\s(?=[*+])|$)', raw_ops + ' '))
+    ]
+    pattern = ''.join(rf'([\d\s]{{{col_len}}})\s' for col_len in col_lens[:-1]) + rf'([\d\s]{{{col_lens[-1]}}})$'
+    rows = [re.search(pattern, row).groups() for row in rows]
+    problems = list()
+    for idx in range(len(ops)):
+        problems.append(list())
+        for i in range(col_lens[idx]):
+            curr = ''
+            for row in rows:
+                if (val := row[idx][i]) != ' ':
+                    curr += val
+            problems[-1].append(int(curr))
     return sum(do_the_math(op, problem) for op, problem in zip(ops, problems, strict=True))
 
 
@@ -41,9 +63,9 @@ if __name__ == '__main__':
     expected_1 = [(4277556, [TEST_INPUT])]
     func_1 = solve
 
-    part2_args = []
-    expected_2 = [(3263827, [TEST_INPUT])]
-    func_2 = solve2
+    part2_args = [True]
+    expected_2 = [(3263827, [TEST_INPUT, True])]
+    func_2 = solve
 
     if expected_1:
         for idx, (e_total, e_params) in enumerate(expected_1):
