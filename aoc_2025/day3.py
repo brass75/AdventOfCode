@@ -28,7 +28,7 @@ class BatteryBank:
             indices[n].append(i)
         # Sort the dictionary, reversed, so we can process from largest to
         # smallest number.
-        self._indices: list[tuple[str,deque[int]]] = sorted(indices.items(), reverse=True)
+        self._indices: list[tuple[str, deque[int]]] = sorted(indices.items(), reverse=True)
 
         self._len = len(bank)
         self._size = size
@@ -40,7 +40,7 @@ class BatteryBank:
             self._highest = int(self._get_highest(self._indices, self._size, self._len))
         return self._highest
 
-    def _get_highest(self, indices: list[tuple[str,deque[int]]], size: int, bank_len: int, base_index: int = 0) -> str:
+    def _get_highest(self, indices: list[tuple[str, deque[int]]], size: int, bank_len: int, base_index: int = 0) -> str:
         """
         Recursively determine the highest joltage for a given bank.
 
@@ -59,10 +59,10 @@ class BatteryBank:
                 return n + self._get_highest(indices, size - 1, bank_len, index.popleft())
         return ''
 
-    def __add__(self, other):
+    def __add__(self, other) -> int:
         return self.highest + other
 
-    def __radd__(self, other):
+    def __radd__(self, other) -> int:
         return self.highest + other
 
 
