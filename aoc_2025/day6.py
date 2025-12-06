@@ -4,7 +4,6 @@ from math import prod
 
 from aoc_lib import solve_problem
 
-# TODO Point this to the correct day!
 INPUT = open('data/day6.txt').read()
 
 TEST_INPUT = """123 328  51 64 
