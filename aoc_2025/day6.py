@@ -1,23 +1,21 @@
 import re
 from collections.abc import Iterable
-from functools import reduce
+from math import prod
 
 from aoc_lib import solve_problem
 
 # TODO Point this to the correct day!
 INPUT = open('data/day6.txt').read()
 
-TEST_INPUT = """
-123 328  51 64 
+TEST_INPUT = """123 328  51 64 
  45 64  387 23 
   6 98  215 314
-*   +   *   +  
-"""
+*   +   *   +  """
 
 
 def do_the_math(op: str, nums: Iterable[int]) -> int:
     if op == '*':
-        return reduce(lambda x, y: x * y, nums)
+        return prod(nums)
     else:
         return sum(nums)
 
@@ -27,6 +25,17 @@ def solve(input_: str) -> int:
     operators = matrix.pop()
     return sum(do_the_math(operators[n], map(int, (row[n].strip() for row in matrix))) for n in range(len(operators)))
 
+def solve2(input_: str) -> int:
+    rows = input_.splitlines()
+    ops = (c for c in rows.pop() if c != ' ')
+    problems = [[]]
+    for val in (''.join(map(str.strip, row)) for row in zip(*rows, strict=True)):
+        if val:
+            problems[-1].append(int(val))
+        else:
+            problems.append(list())
+    return sum(do_the_math(op, problem) for op, problem in zip(ops, problems, strict=True))
+
 
 if __name__ == '__main__':
     part1_args = []
@@ -34,8 +43,8 @@ if __name__ == '__main__':
     func_1 = solve
 
     part2_args = []
-    expected_2 = []
-    func_2 = solve
+    expected_2 = [(3263827, [TEST_INPUT])]
+    func_2 = solve2
 
     if expected_1:
         for idx, (e_total, e_params) in enumerate(expected_1):
