@@ -1,8 +1,10 @@
-from collections import deque
+import functools
+from collections import deque, defaultdict
+from functools import partial
+from multiprocessing.pool import ThreadPool
 
 from aoc_lib import solve_problem
 
-# TODO Point this to the correct day!
 INPUT = open('data/day7.txt').read()
 
 TEST_INPUT = """.......S.......
@@ -24,29 +26,34 @@ TEST_INPUT = """.......S.......
 """
 
 
-def solve(input_: str) -> int:
-    splits = set()
-    lines = input_.strip().splitlines()
-    curr = deque()
-    curr.append(input_.index('S'))
-    for n, line in enumerate(lines[1:]):
-        next_indices = deque()
-        while curr and (idx := curr.popleft()):
-            match line[idx]:
-                case '^':
-                    splits.add((n, idx))
-                    for i in [idx + 1, idx - 1]:
-                        if i not in next_indices:
-                            next_indices.append(i)
-                case '.':
-                    next_indices.append(idx)
+def solve(input_: str) -> tuple[int, int]:
+    splits = 0
+    # We don't need lines that don't cause a split - it's just wasted time processing
+    lines = [line for line in input_.strip().splitlines() if '^' in line]
+    curr = defaultdict(int)
+    # Set up the start
+    curr[input_.index('S')] = 1
+    for n, line in enumerate(lines, 1):
+        print(f'Checking {n} line={''.join(line)}')
+        next_indices = defaultdict(int)
+        for i, count in curr.items():
+            if count > 0:
+                if line[i] == '^':
+                    # The beam splits, record that and update for the next one.
+                    splits += 1
+                    next_indices[i - 1] += count
+                    next_indices[i + 1] += count
+                else:
+                    # No split so keep going on that index
+                    next_indices[i] += count
         curr = next_indices
-    return len(splits)
+    return splits, sum(curr.values())
 
 
 if __name__ == '__main__':
     part1_args = []
-    expected_1 = [(21, [TEST_INPUT])]
+    # Since we're running the exact same thing for both parts we can just run it once.
+    expected_1 = [((21, 40), [TEST_INPUT])]
     func_1 = solve
 
     part2_args = []
