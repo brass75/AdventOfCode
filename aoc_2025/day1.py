@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from aoc_lib import solve_problem
 
-# TODO Point this to the correct day!
 INPUT = open('data/day1.txt').read()
 
 TEST_INPUT = """
