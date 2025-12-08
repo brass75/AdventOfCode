@@ -38,45 +38,47 @@ class Point:
     y: int
     z: int
 
-    @property
-    def magnitude(self):
-      return math.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
-
-    @classmethod
-    def from_string(cls, data: str) -> Point:
-        return cls(*map(int, data.split(',')))
-
-    def __sub__(self, other) -> Point:
-        return Point(self.x - other.x, self.y - other.y, self.z - other.z)
-
-    def __str__(self):
-        return f"{self.x},{self.y},{self.z}"
+    def get_distance(self, other: Point) -> float:
+        return math.sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.z - other.z) ** 2)
 
 def parse_input(input_: str) -> list[Point]:
-    return [Point.from_string(line) for line in input_.strip().splitlines()]
+    return [Point(*map(int, line.split(','))) for line in input_.strip().splitlines()]
 
-
-def solve(input_: str, limit: int = 0) -> int:
+def solve(input_: str, limit: int = 0) -> tuple[int, int]:
+    part1, part2 = 0, 0
     boxes = parse_input(input_)
-    pairs = {
-        frozenset((p1, p2)): ((p1 - p2).magnitude, (p1, p2))
-        for p1 in boxes
-        for p2 in boxes
-        if p1 != p2
-    }
-    pairs = deque(sorted((v, p, q) for (p, q), v in pairs.items()))
+    pairs = dict()
+    for p1 in boxes:
+        for p2 in boxes:
+            pair = frozenset((p1, p2))
+            if p1 == p2 or pair in pairs:
+                # The "pair in pairs" check is to avoid doing the unneeded calculation
+                continue
+            # We need the distance and the pair for the heap to work as expected
+            pairs[pair] = (p1.get_distance(p2), *pair)
+    pairs = list(pairs.values())
+    heapq.heapify(pairs)
     circuits = {box: {box} for box in boxes}
-    for _ in range(limit):
-        _, p, q = pairs.popleft()
+    while not (part1 and part2):
+        # We don't care about the distance at this point - that was just used for the heap to sort properly
+        _, p, q = heapq.heappop(pairs)
         if circuits[p] is not circuits[q]:
+            # If they're not in a circuit already merge their circuits and update all the boxes in the circuit.
             circuit = circuits[p] | circuits[q]
             circuits.update({p: circuit for p in circuit})
-    return math.prod(heapq.nlargest(3, {len(circuit) for circuit in circuits.values()}))
+            if len(circuit) == len(boxes):
+                # When we have a circuit that includes all the boxes we've found the part 2 solution
+                part2 = p.x * q.x
+        if (limit := limit - 1) == 0:
+            # Part 1 is limited so we can update it now.
+            part1 = math.prod(heapq.nlargest(3, {len(circuit) for circuit in circuits.values()}))
+    return part1, part2
 
 
 if __name__ == '__main__':
+    # Same algorithm for both. Use a single run for both.
     part1_args = [1000]
-    expected_1 = [(40, [TEST_INPUT, 10])]
+    expected_1 = [((40, 25272), [TEST_INPUT, 10])]
     func_1 = solve
 
     part2_args = []
