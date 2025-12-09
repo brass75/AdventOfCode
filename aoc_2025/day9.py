@@ -1,4 +1,7 @@
-from dataclasses import dataclass
+import heapq
+from itertools import combinations
+
+from shapely import Polygon
 
 from aoc_lib import solve_problem
 
@@ -15,44 +18,20 @@ TEST_INPUT = """
 7,3
 """
 
-class Point:
-    def __init__(self, point: str):
-        self.x, self.y = map(int, point.split(','))
 
-    def __hash__(self):
-        return hash((self.x, self.y))
-
-
-@dataclass(frozen=True)
-class Rectangle:
-    p1: Point
-    p2: Point
-
-
-    @property
-    def length(self):
-        return  max((self.p1.x, self.p2.x)) - min((self.p1.x, self.p2.x)) + 1
-
-    @property
-    def height(self):
-        return  max((self.p1.y, self.p2.y)) - min((self.p1.y, self.p2.y)) + 1
-
-    @property
-    def area(self):
-        return self.height * self.length
-
-
-def solve(input_: str) -> int:
-    points = [Point(line) for line in input_.strip().splitlines()]
-    recatngles = dict()
-    for p1 in points:
-        for p2 in points:
-            if p1 == p2:
-                continue
-            curr = frozenset((p1, p2))
-            if curr not in recatngles:
-                recatngles[curr] = Rectangle(p1, p2)
-    return max(r.area for r in recatngles.values())
+def solve(input_: str, contains: bool = False) -> int:
+    points = [tuple(map(int, line.split(','))) for line in input_.strip().splitlines()]
+    rects = [((abs(ax - bx) + 1) * (abs(ay - by) + 1), ax, ay, bx, by)
+             for (ax, ay), (bx, by) in combinations(points, 2)]
+    heapq.heapify_max(rects)
+    if not contains:
+        return heapq.heappop(rects)[0]
+    polygon = Polygon(points + [points[0]])
+    while rects:
+        area, ax, ay, bx, by = heapq.heappop_max(rects)
+        if Polygon([(ax, ay), (ax, by), (bx, by), (bx, ay), (ax, ay)]).within(polygon):
+            return area
+    return 0
 
 
 if __name__ == '__main__':
@@ -60,8 +39,8 @@ if __name__ == '__main__':
     expected_1 = [(50, [TEST_INPUT])]
     func_1 = solve
 
-    part2_args = []
-    expected_2 = []
+    part2_args = [True]
+    expected_2 = [(24, [TEST_INPUT, True])]
     func_2 = solve
 
     if expected_1:
