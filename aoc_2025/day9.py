@@ -21,8 +21,9 @@ TEST_INPUT = """
 
 def solve(input_: str, contains: bool = False) -> int:
     points = [tuple(map(int, line.split(','))) for line in input_.strip().splitlines()]
-    rects = [((abs(ax - bx) + 1) * (abs(ay - by) + 1), ax, ay, bx, by)
-             for (ax, ay), (bx, by) in combinations(points, 2)]
+    rects = [
+        ((abs(ax - bx) + 1) * (abs(ay - by) + 1), ax, ay, bx, by) for (ax, ay), (bx, by) in combinations(points, 2)
+    ]
     heapq.heapify_max(rects)
     if not contains:
         return heapq.heappop(rects)[0]

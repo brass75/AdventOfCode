@@ -1,9 +1,6 @@
-import functools
 import heapq
 import math
-from collections import deque
 from dataclasses import dataclass
-from itertools import starmap, combinations
 
 from aoc_lib import solve_problem
 
@@ -32,6 +29,7 @@ TEST_INPUT = """
 425,690,689
 """
 
+
 @dataclass(frozen=True, order=True)
 class Point:
     x: int
@@ -41,8 +39,10 @@ class Point:
     def get_distance(self, other: Point) -> float:
         return math.sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.z - other.z) ** 2)
 
+
 def parse_input(input_: str) -> list[Point]:
     return [Point(*map(int, line.split(','))) for line in input_.strip().splitlines()]
+
 
 def solve(input_: str, limit: int = 0) -> tuple[int, int]:
     part1, part2 = 0, 0

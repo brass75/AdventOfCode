@@ -1,8 +1,10 @@
 import functools
-import re
 import itertools
+import re
 from multiprocessing.pool import ThreadPool as Pool
+
 from scipy.optimize import linprog
+
 from aoc_lib import solve_problem
 
 # TODO Point this to the correct day!
@@ -54,12 +56,18 @@ def check_joltages(machine: dict) -> int:
             for index in toggles:
                 lights[index] += 1
         return lights
+
     for n in range(1, 1_000_000):
-        if any(lights == machine['jolts']
-               for lights in Pool(8).starmap(run_combo,
-                                             ((combo, len(machine['lights']))
-                                              for combo in itertools.combinations_with_replacement(machine['buttons'], r=n)))
-               ):
+        if any(
+            lights == machine['jolts']
+            for lights in Pool(8).starmap(
+                run_combo,
+                (
+                    (combo, len(machine['lights']))
+                    for combo in itertools.combinations_with_replacement(machine['buttons'], r=n)
+                ),
+            )
+        ):
             return n
     return 0
 
@@ -71,14 +79,13 @@ def scipy_part2(machine: dict) -> int:
         c=[1] * len(machine['buttons']),
         A_eq=[[i in move for move in machine['buttons']] for i in range(len(machine['jolts']))],
         b_eq=machine['jolts'],
-        integrality=True
+        integrality=True,
     ).fun
 
 
 def solve(input_: str, increment: bool = False) -> int:
     machines = parse_input(input_)
     return sum(check_toggles(machine) for machine in machines) if not increment else sum(map(scipy_part2, machines))
-
 
 
 if __name__ == '__main__':

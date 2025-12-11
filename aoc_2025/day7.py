@@ -1,7 +1,4 @@
-import functools
-from collections import deque, defaultdict
-from functools import partial
-from multiprocessing.pool import ThreadPool
+from collections import defaultdict
 
 from aoc_lib import solve_problem
 
@@ -34,7 +31,7 @@ def solve(input_: str) -> tuple[int, int]:
     # Set up the start
     curr[input_.index('S')] = 1
     for n, line in enumerate(lines, 1):
-        print(f'Checking {n} line={''.join(line)}')
+        print(f'Checking {n} line={"".join(line)}')
         next_indices = defaultdict(int)
         for i, count in curr.items():
             if count > 0:

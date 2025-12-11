@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [tool.ruff]
-target-version = "py312"
+target-version = "py314"
 # Allow lines to be as long as 120 characters.
 line-length = 120
 lint.select = [
