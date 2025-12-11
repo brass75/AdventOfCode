@@ -34,16 +34,10 @@ lint.unfixable = []
 exclude = [
 ]
 
-[[tool.uv.index]]
-url = "https://nexus.cloud.aws.tenablesecurity.com/repository/tenable_pypigroup/simple"
-
 [tool.ruff.lint.isort]
 known-local-folder = [
   "aoc_lib",
 ]
-
-[[tool.uv.index]]
-url = "https://nexus.cloud.aws.tenablesecurity.com//tenable_pypigroup/pypi"
 
 [tool.ruff.format]
 quote-style = "single"
