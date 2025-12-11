@@ -34,8 +34,8 @@ def check_toggles(machine: dict) -> int:
             for toggles in combo:
                 for index in toggles:
                     lights[index] = not lights[index]
-                if lights == machine['lights']:
-                    return n
+            if lights == machine['lights']:
+                return n
     return 0
 
 
