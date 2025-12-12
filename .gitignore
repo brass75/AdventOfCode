@@ -8,3 +8,4 @@
 /.idea/workspace.xml
 /.idea/AdventOfCode.iml
 */data/*
+*/__pycache__/*
