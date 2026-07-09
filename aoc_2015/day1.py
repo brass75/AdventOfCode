@@ -1,4 +1,4 @@
-from aoc_lib.aoc_lib import solve_problem
+from aoc_lib import solve_problem
 
 # TODO Point this to the correct day!
 INPUT = open('data/day1.txt').read()
