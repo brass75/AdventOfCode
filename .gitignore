@@ -9,3 +9,5 @@
 /.idea/AdventOfCode.iml
 */data/*
 */__pycache__/*
+*/*.egg-info/*
+/build/**
