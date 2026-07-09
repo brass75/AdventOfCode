@@ -1,13 +1,20 @@
+from pathlib import Path
+from typing import Any
+
 from aoc_lib import solve_problem
 
-# TODO Point this to the correct day!
-INPUT = open('data/day***.txt').read()
 
-TEST_INPUT = """"""
+def parse_input(input_: str) -> Any:
+    return input_
 
 
-def solve(input_: str) -> int:
-    pass
+INPUT = parse_input(Path('data/day***.txt').read_text())
+
+TEST_INPUT = parse_input("""""")
+
+
+def solve(input_: Any) -> int:
+    return -1
 
 
 if __name__ == '__main__':

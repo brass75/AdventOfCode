@@ -9,7 +9,7 @@ mkdir year:
 
 # Create the Python file for the new day 
 new-day year day: (mkdir year)
-  cp .idea/fileTemplates/AOC.py aoc_{{ year }}/day{{ day }}.py
+  sed -e 's/day\*\*\*.txt/day{{ day }}.txt/g' .idea/fileTemplates/AOC.py > aoc_{{ year }}/day{{ day }}.py
   touch aoc_{{ year }}/data/day{{ day  }}.txt
 
 # Run the code for a given day
