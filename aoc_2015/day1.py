@@ -13,18 +13,24 @@ def solve(input_: str) -> int:
     return sum(vals[p] for p in input_.strip())
 
 
+def alt_solve(input_: str) -> int:
+    return 2 * input_.count('(') - len(input_.strip())
+
+
 def solve2(input_: str) -> int:
-    start = 0
-    for i, c in enumerate(input_, 1):
-        start += vals[c]
-        if start < 0:
-            return i
+    floor = 0
+    count = 0
+    while floor >= 0:
+        floor += vals[input_[count]]
+        count += 1
+    return count
 
 
 if __name__ == '__main__':
     part1_args = []
     expected_1 = [(3, [TEST_INPUT])]
     func_1 = solve
+    func_1_alt = alt_solve
 
     part2_args = []
     expected_2 = [(1, [')'])]
@@ -34,6 +40,7 @@ if __name__ == '__main__':
         for idx, (e_total, e_params) in enumerate(expected_1):
             solve_problem(func_1, 1, (idx + 1, e_total), *e_params)
         solve_problem(func_1, 1, None, INPUT, *part1_args)
+        solve_problem(func_1_alt, 1, None, INPUT, *part1_args)
 
     if expected_2:
         for idx, (e_total, e_params) in enumerate(expected_2):
