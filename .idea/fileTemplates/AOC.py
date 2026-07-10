@@ -19,11 +19,11 @@ def solve(input_: Any) -> int:
 
 if __name__ == '__main__':
     part1_args = []
-    expected_1 = []
+    expected_1 = []  # [(<answer>, [<input>, *part1_args])]
     func_1 = solve
 
     part2_args = []
-    expected_2 = []
+    expected_2 = []  # [<answer>, [(<input>, *part2_args)]]
     func_2 = solve
 
     if expected_1:
