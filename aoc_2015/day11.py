@@ -9,6 +9,7 @@ TEST_INPUT = 'abcaabcb'
 
 DISALLOWED_LETTERS = 'ilo'
 
+
 @cache
 def increment_latter(char: str) -> str:
     """Get the net letter"""
@@ -17,13 +18,9 @@ def increment_latter(char: str) -> str:
 
 def sequence(value: str) -> bool:
     """Check for a sequence of 3 consecutive letters"""
-    for i in range(len(value) - 2):
-        if (
-            ord(value[i]) == ord(value[i+1]) -1 and
-            ord(value[i]) == ord(value[i+2]) - 2
-        ):
-            return True
-    return False
+    return any(
+        ord(value[i]) == ord(value[i + 1]) - 1 and ord(value[i]) == ord(value[i + 2]) - 2 for i in range(len(value) - 2)
+    )
 
 
 def ignored_letter(value: str) -> bool:
@@ -39,7 +36,8 @@ def double_letter(value: str) -> bool:
 def solve(password: str) -> str:
     c: str
     while True:
-        pass_list: list[str] = list(password[::-1])  # Got from the right so we need to reverse it.
+        # Got from the right so we need to reverse it.
+        pass_list: list[str] = list(password[::-1])
         i: int = 0
         for c in pass_list:
             if (c := increment_latter(c)) == 'a':
@@ -57,6 +55,7 @@ def solve(password: str) -> str:
                     return password
                 break
 
+
 if __name__ == '__main__':
     part1_args = [INPUT]
     # [(<answer>, [<input>, *part1_args])]
@@ -64,7 +63,8 @@ if __name__ == '__main__':
     func_1 = solve
 
     part2_args = [solve(INPUT)]
-    expected_2 = [('abcaabcc', [TEST_INPUT])]  # [<answer>, [(<input>, *part2_args)]]
+    # [<answer>, [(<input>, *part2_args)]]
+    expected_2 = [('abcaabcc', [TEST_INPUT])]
     func_2 = solve
 
     if expected_1:
