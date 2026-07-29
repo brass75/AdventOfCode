@@ -1,8 +1,4 @@
-from pathlib import Path
-from typing import Any
-
 from aoc_lib import solve_problem
-
 
 INPUT = '1113122113'
 
