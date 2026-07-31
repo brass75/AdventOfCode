@@ -197,6 +197,14 @@ class GridBase:
             self.grid[obstacle] = marker
 
     def all_adjacent(self, point: tuple[int, int], value: str | None = None) -> int:
+        """
+        Get the number of actual adjacent locations to a given point. If value is set, get the number of adjacent points
+        that have that value.
+
+        :param point: The point to check.
+        :param value: Optional value to check in the adjacent points.
+        :return: The number of adjacent points that meet the criteria.
+        """
         return len(
             [
                 adj
