@@ -38,7 +38,12 @@ class GridBase:
     """Base class for a grid/matrix using a dictionary for storage"""
 
     def __init__(
-        self, input_: str, func: Callable = None, char_width: int = 1, ignore: Any = None, parsed: dict = None
+        self,
+        input_: str,
+        func: Callable | None = None,
+        char_width: int = 1,
+        ignore: Any = None,
+        parsed: dict | None = None,
     ):
         self._input = input_
         lines = input_.splitlines()
@@ -76,6 +81,15 @@ class GridBase:
         return 0 <= x < self.length and 0 <= y < self.height
 
     @property
+    def corners(self) -> list[tuple[int, int]]:
+        return [
+            (0, 0),
+            (self.height - 1, 0),
+            (0, self.length - 1),
+            (self.height - 1, self.length - 1),
+        ]
+
+    @property
     def values(self):
         return self.grid.values()
 
@@ -103,7 +117,7 @@ class GridBase:
         max_length: int = 0,
         most: int = 1,
         least: int = 1,
-        additional_obstacles: Iterable = None,
+        additional_obstacles: Iterable | None = None,
         steps: bool = False,
     ) -> int | tuple[int, list]:
         """
@@ -119,13 +133,13 @@ class GridBase:
         :param steps: Flag to show whether to return the valid steps.
         """
         # Don't forget to add the first step if we need the actual path.
-        steps = [start] if steps else False
+        _steps: list[tuple[int, int]] = [start] if steps else []
         q = [(0, *start, 0, 0, steps)]
         seen = set()
         while q:
             length, x, y, px, py, steps = heappop(q)
             if end == (x, y) or (max_length and length > max_length):
-                return (length, steps) if steps else length
+                return (length, _steps) if steps else length
             if (x, y, px, py) in seen:
                 continue
             seen.add((x, y, px, py))
@@ -146,7 +160,7 @@ class GridBase:
                     ):
                         continue
                     if i >= least:
-                        new_steps = [*steps, (nx, ny)] if steps else steps
+                        new_steps: list[tuple[int, int]] = [*_steps, (nx, ny)] if steps else _steps
                         # If we're beyond the minimum number of steps add to the heap.
                         heappush(q, (loop + i, nx, ny, dx, dy, new_steps))
 
@@ -182,6 +196,15 @@ class GridBase:
                 raise KeyError(f'obstacle {obstacle} not in grid')
             self.grid[obstacle] = marker
 
+    def all_adjacent(self, point: tuple[int, int], value: str | None = None) -> int:
+        return len(
+            [
+                adj
+                for dir in DIRECTIONS
+                if (adj := self.get(get_adjacent(dir, point))) is not None and (not value or adj == value)
+            ]
+        )
+
 
 @functools.cache
 def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:
@@ -210,6 +233,7 @@ def get_adjacent(direction: str, point: tuple[int, int]) -> tuple[int, int]:
             return col - 1, row
         case 'NW':
             return col - 1, row - 1
+    raise ValueError(f'Invalid direction: {direction!r}')
 
 
 @functools.cache
@@ -231,6 +255,7 @@ def direction_deltas(direction: str) -> tuple[int, int]:
             return -1, 0
         case 'NW':
             return -1, -1
+    raise ValueError(f'Invalid direction: {direction!r}')
 
 
 def get_all_adjacent(point: tuple[int, int], directions=DIRECTIONS) -> Generator[tuple[int, int]]:
@@ -255,7 +280,7 @@ class InLoop(Exception):
 class WalkingGrid(GridBase):
     """A grid for path tracing."""
 
-    def __init__(self, input_: str, start: str = None, start_pos: tuple[int, int] = None, obstacle: str = None):
+    def __init__(self, input_: str, start: str = None, start_pos: tuple[int, int] | None = None, obstacle: str = None):
         """
         Initialize a WalkingGrid instance.
 
@@ -276,7 +301,7 @@ class WalkingGrid(GridBase):
         else:
             raise ValueError('start_pos or start must be specified')
 
-    def walk(self, obstacle: tuple[int, int] = None) -> set:
+    def walk(self, obstacle: tuple[int, int] | None = None) -> set:
         """
         Walks the patch as defined in the grid
 
