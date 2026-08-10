@@ -8,6 +8,6 @@
 /.idea/workspace.xml
 /.idea/AdventOfCode.iml
 */data/*
-*/__pycache__/*
+**/__pycache__/**
 */*.egg-info/*
 /build/**
