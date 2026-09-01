@@ -56,6 +56,7 @@ def solve(commands: list[Command]) -> int:
     grid = [['.' for _ in range(WIDTH)] for _ in range(HEIGHT)]
     for command in commands:
         grid = command.run(grid)
+    # The screen is displaying the answer for part 2 so this print is needed.
     print('\n'.join(''.join(row) for row in grid))
     return sum(c == '#' for row in grid for c in row)
 
