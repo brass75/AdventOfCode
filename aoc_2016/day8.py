@@ -9,7 +9,6 @@ HEIGHT = 6
 class Command:
     def __init__(self, command: str) -> None:
         pieces = command.split()
-        print(pieces)
         self.x = self.y = -1
         self._input = command
         if pieces[0] == 'rect':
@@ -26,7 +25,6 @@ class Command:
 
     def run(self, grid: list[list[str]]) -> list[list[str]]:
         if self.command == 'rect':
-            print(f'Adding rectangle ({self.x}, {self.y})')
             for y in range(self.y):
                 for x in range(self.x):
                     grid[y][x] = '#'
